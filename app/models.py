@@ -36,6 +36,13 @@ class User:
             "image": Binary(image_data),     # 画像データをバイナリ形式で格納
             "questions_and_answers": questions_and_answers,
             "profile": profile
+
+    def create_user(self, name, group_name, mbti, image_data):
+        user_data = {
+            "name": name,
+            "group_name": group_name,
+            "mbti": mbti,
+            "image": Binary(image_data)     # 画像データをバイナリ形式で格納
         }
         return self.collection.insert_one(user_data)
     
