@@ -16,6 +16,11 @@
 
     <p id="finish-message" style="display: none;">終了しました。ありがとうございました！</p>
 
+    <!-- Flaskから渡されたgroup_nameをJavaScriptに埋め込む -->
+    <script>
+        const GROUP_NAME = "{{ group_name }}";
+    </script>
+
     <!-- JavaScriptファイルを読み込む -->
     <script src="../static/js/question.js"></script>
 </body>
