@@ -1,0 +1,46 @@
+from bson.binary import Binary
+from pymongo import MongoClient
+from flask import current_app, g
+
+
+def get_db():
+    if 'mongo_client' not in g:
+        g.mongo_client = MongoClient(current_app.config('MONGO_URI'))  # 新しいMongoClientインスタンスを作成し、gオブジェクトに格納
+    return g.mongo_client.web_app_db
+    
+def close_db(e=None):
+    mongo_client = g.pop('mongo_client', None)
+    if mongo_client is not None:
+        mongo_client.close()  # MongoDBクライアントを閉じる
+
+# Faskの初期化
+def init_app(app):
+    app.teardown_appcontext(close_db)  # アプリケーションコンテキストが終了するときにclose_db関数を呼び出す
+
+"""
+    MongoDBには複数のCollection(Tableみたいなもの)
+    CollectionにはDocumentが格納され，JSON形式でデータを格納
+"""
+class User:
+    def __init__(self, db):
+        self.collection = db.users
+
+    def create_user(self, name, group_name, mbti, image_data):
+        user_data = {
+            "name": name,
+            "group_name": group_name,
+            "mbti": mbti,
+            "image": Binary(image_data)     # 画像データをバイナリ形式で格納
+        }
+        return self.collection.insert_one(user_data)
+    
+    def get_user_by_name(self, name):
+        return self.collection.fine_one({"name": name})
+    
+    # 返り値 :  (pymongo.cursor.Cursor) 全てのドキュメントを含む
+    def get_user_by_group_name(self, group_name):
+        return self.collection.find({"group_name": group_name})
+    
+    """
+        MBTIでグループ分けとかもあり
+    """
