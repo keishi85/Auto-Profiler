@@ -147,7 +147,7 @@ class Questionnaire {
 
         // 最終的な送信データを構成
         const dataToSend = {
-            groupName: this.groupName,
+            group_name: this.groupName,
             ...standardQuestionsData,
             ...customQuestionsData
         };
@@ -181,7 +181,7 @@ const STANDARD_QUESTIONS = [
     "name",
     "age",
     "country",
-    "favorite things",
+    "favorite_things",
     "mbti"
 ];
 
