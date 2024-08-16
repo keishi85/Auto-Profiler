@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, url_for   
 from models import get_db, User
+from utils.analyze import generate_profile
 
 
 questions_bp = Blueprint('questions', __name__)
@@ -20,6 +21,9 @@ def questions():
     # 上記のデータ以外は質問とその回答
     questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image_binary']}
 
+    # 取得したデータを元にプロフィールを作成
+    profile = generate_profile(data)
+
     # MongoDBに接続し，Userクラスのインスタンスを作成
     db = get_db()
     user_model = User(db)
@@ -33,10 +37,9 @@ def questions():
         favorite_things=favorite_things,
         mbti=mbti,
         image_data=image_binary,
-        questions_and_answers=questions_and_answers
+        questions_and_answers=questions_and_answers,
+        profile=profile
     )
 
-    # 取得したデータを元にプロフィールを作成
-
-    # 画像静止絵が終了したら，動画に切り替える
+    # profileの生成が終了したら，動画に切り替える
     return redirect(url_for('complete.html', group_name=group_name))

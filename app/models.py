@@ -25,7 +25,7 @@ class User:
     def __init__(self, db):
         self.collection = db.users
 
-    def create_user(self,group_name, name, age, country, favorite_things, mbti, image_data, questions_and_answers):
+    def create_user(self,group_name, name, age, country, favorite_things, mbti, image_data, questions_and_answers, profile):
         user_data = {
             "group_name": group_name,
             "name": name,
@@ -34,7 +34,8 @@ class User:
             "favorite_things": favorite_things,
             "mbti": mbti,
             "image": Binary(image_data),     # 画像データをバイナリ形式で格納
-            "questions_and_answers": questions_and_answers
+            "questions_and_answers": questions_and_answers,
+            "profile": profile
         }
         return self.collection.insert_one(user_data)
     
