@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify   
+from flask import Blueprint, request, redirect, url_for   
 from models import get_db, User
 
 
@@ -36,5 +36,7 @@ def questions():
         questions_and_answers=questions_and_answers
     )
 
-    # 保存結果を返す(ドキュメントのID)
-    return jsonify({"message": "Data saved successfully", "user_id": str(result.inserted_id)}), 201
+    # 取得したデータを元にプロフィールを作成
+
+    # 画像静止絵が終了したら，動画に切り替える
+    return redirect(url_for('complete.html', group_name=group_name))
