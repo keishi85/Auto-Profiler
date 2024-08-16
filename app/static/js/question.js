@@ -146,5 +146,3 @@ const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM
 document.getElementById('next-button').addEventListener('click', () => {
     questionnaire.showNextQuestion();
 });
-
-
