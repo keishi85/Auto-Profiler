@@ -1,10 +1,11 @@
 class Questionnaire {
-    constructor(standardQuestions, customQuestionsNum) {
+    constructor(standardQuestions, customQuestionsNum, groupName) {
         this.standardQuestions = standardQuestions; // 質問の配列
         this.standardQuestionsInput = []; // 入力された値を保持する配列
         this.customQuestionsNum = customQuestionsNum; // 追加質問の数
         this.customQuestions = []; // 追加質問の配列
         this.customQuestionsInput = []; // 追加質問の入力値を保持する配列
+        this.groupName = groupName; // グループ名
 
         this.currentQuestionIndex = 0; // 現在の質問のインデックス
 
@@ -117,7 +118,7 @@ class Questionnaire {
 
     // 終了メッセージを表示するメソッド
     showFinishMessage() {
-        // 入力値確認
+        // 入力値確認（デバック用）
         console.log("通常の質問: ", this.standardQuestions)
         console.log("ユーザーが入力した値: ", this.standardQuestionsInput); // 全ての入力値を表示
         console.log("ユーザーが入力した追加質問: ", this.customQuestions); // 全ての追加質問を表示
@@ -125,8 +126,55 @@ class Questionnaire {
 
         this.nextButton.style.display = 'none'; // 次へボタンを隠す
         this.finishMessage.style.display = 'block'; // 終了メッセージを表示
+
+        // Flaskにデータを送信
+        this.sendQuestionnaire();
+    }
+
+    // Flaskに質問と回答をデータを送信するメソッド
+    sendQuestionnaire() {
+        // 通常質問の質問と回答をオブジェクトに変換
+        const standardQuestionsData = this.standardQuestions.reduce((acc, question, index) => {
+            acc[question] = this.standardQuestionsInput[index] || ''; // 回答がない場合も空文字を設定
+            return acc;
+        }, {});
+
+        // 追加質問の質問と回答をオブジェクトに変換
+        const customQuestionsData = this.customQuestions.reduce((acc, question, index) => {
+            acc[question] = this.customQuestionsInput[index] || ''; // 回答がない場合も空文字を設定
+            return acc;
+        }, {});
+
+        // 最終的な送信データを構成
+        const dataToSend = {
+            groupName: this.groupName,
+            ...standardQuestionsData,
+            ...customQuestionsData
+        };
+
+        // コンソールに表示（デバッグ用）
+        console.log("送信するデータ: ", dataToSend);
+
+        // Flaskにデータを送信
+        fetch('/questions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
 }
+
+// Flaskから渡されたデータを取得
+const GROUP_NAME = "{{ group_name }}";
 
 // 質問の配列を定義
 const STANDARD_QUESTIONS = [
@@ -140,7 +188,7 @@ const STANDARD_QUESTIONS = [
 const CUSTOM_QUESTIONS_NUM = 3;
 
 // Questionnaireクラスのインスタンスを作成
-const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM);
+const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM, GROUP_NAME);
 
 // 次へボタンのクリックイベントリスナーを追加
 document.getElementById('next-button').addEventListener('click', () => {
