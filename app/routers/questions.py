@@ -1,7 +1,8 @@
 from flask import Blueprint, request, redirect, url_for   
-from models import get_db, User
-from utils.analyze import generate_profile
 from flask import Blueprint, render_template, request
+
+from app.models import get_db, User
+from app.utils.analyze import generate_profile
 
 
 questions_bp = Blueprint('questions', __name__)
@@ -44,11 +45,3 @@ def questions():
 
     # profileの生成が終了したら，動画に切り替える
     return redirect(url_for('complete.html', group_name=group_name))
-
-@questions_bp.route('/questions', methods=['GET', 'POST'])
-def questions():
-    if request.method == 'POST':
-        answers = request.form.tp_dict()
-
-        # 回答の処理
-        return 

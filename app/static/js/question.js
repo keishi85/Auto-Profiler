@@ -173,8 +173,8 @@ class Questionnaire {
     }
 }
 
-// Flaskから渡されたデータを取得
-const GROUP_NAME = "{{ group_name }}";
+// Flaskから渡されたデータを取得，HTML上のコードと競合
+// const GROUP_NAME = "{{ group_name }}";
 
 // 質問の配列を定義
 const STANDARD_QUESTIONS = [

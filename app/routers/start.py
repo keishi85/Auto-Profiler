@@ -5,9 +5,9 @@ from flask import Blueprint, render_template, request
      グループ名の入力
 """
 
-group_bp = Blueprint('start', __name__)
+start_bp = Blueprint('start', __name__)
 
-@group_bp.route('/start', methods=['GET', 'POST'])
+@start_bp.route('/start', methods=['GET', 'POST'])
 def group():
     if request.method == 'POST':
         group_name = request.form["group_name"]
