@@ -5,7 +5,7 @@ from flask import current_app, g
 
 def get_db():
     if 'mongo_client' not in g:
-        g.mongo_client = MongoClient(current_app.config('MONGO_URI'))  # 新しいMongoClientインスタンスを作成し、gオブジェクトに格納
+        g.mongo_client = MongoClient(current_app.config.get('MONGO_URI'))  # 新しいMongoClientインスタンスを作成し、gオブジェクトに格納
     return g.mongo_client.web_app_db
     
 def close_db(e=None):
@@ -25,7 +25,16 @@ class User:
     def __init__(self, db):
         self.collection = db.users
 
-    def create_user(self,group_name, name, age, country, favorite_things, mbti, image_data, questions_and_answers, profile):
+    def create_user(self, 
+                    group_name, 
+                    name, 
+                    age, 
+                    country, 
+                    favorite_things, 
+                    mbti, 
+                    image_data, 
+                    questions_and_answers, 
+                    profile):
         user_data = {
             "group_name": group_name,
             "name": name,
@@ -33,16 +42,9 @@ class User:
             "country": country,
             "favorite_things": favorite_things,
             "mbti": mbti,
-            "image": Binary(image_data),     # 画像データをバイナリ形式で格納
+            "image": Binary(image_data) if image_data is not None else None,     # 画像データをバイナリ形式で格納
             "questions_and_answers": questions_and_answers,
             "profile": profile
-
-    def create_user(self, name, group_name, mbti, image_data):
-        user_data = {
-            "name": name,
-            "group_name": group_name,
-            "mbti": mbti,
-            "image": Binary(image_data)     # 画像データをバイナリ形式で格納
         }
         return self.collection.insert_one(user_data)
     

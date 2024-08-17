@@ -6,3 +6,11 @@
 def generate_profile(data: dict)->bytes:
     # 画像生成処理
     pass
+
+
+"""
+    入力された国名から国の部分を作成
+    引数: 国名
+"""
+def generate_country(country: str)->None:
+    pass
