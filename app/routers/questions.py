@@ -18,7 +18,7 @@ def questions():
     country = data['country']
     favorite_things = data['favorite_things']
     mbti = data['mbti']
-    image_binary = data['image_binary']
+    image_binary = data.get('image_binary', None)
 
     # 上記のデータ以外は質問とその回答
     questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image_binary']}
@@ -44,4 +44,5 @@ def questions():
     )
 
     # profileの生成が終了したら，動画に切り替える
-    return redirect(url_for('complete.html', group_name=group_name))
+    # return redirect(url_for('complete.html', group_name=group_name))
+    return render_template('complete.html', group_name=group_name)

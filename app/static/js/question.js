@@ -182,10 +182,11 @@ const STANDARD_QUESTIONS = [
     "age",
     "country",
     "favorite_things",
-    "mbti"
+    "mbti",
+    "image" // バイナリーにあとで変換して！！
 ];
 
-const CUSTOM_QUESTIONS_NUM = 3;
+const CUSTOM_QUESTIONS_NUM = 1;
 
 // Questionnaireクラスのインスタンスを作成
 const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM, GROUP_NAME);
