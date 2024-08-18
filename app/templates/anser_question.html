@@ -16,12 +16,20 @@
 
     <p id="finish-message" style="display: none;">終了しました。ありがとうございました！</p>
 
+    <!-- カメラキャプチャ用の要素 -->
+    <div id="camera-container" style="display: none;">
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+        <button id="capture-button">撮影</button>
+        <img id="captured-image" style="display: none;">
+    </div>
+
     <!-- Flaskから渡されたgroup_nameをJavaScriptに埋め込む -->
     <script>
         const GROUP_NAME = "{{ group_name }}";
     </script>
 
     <!-- JavaScriptファイルを読み込む -->
-    <script src="../static/js/question.js"></script>
+    <script type="module" src="../static/js/question.js"></script>
 </body>
 </html>

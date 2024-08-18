@@ -1,3 +1,5 @@
+import { CameraHandler } from "./cameraHandler.js";
+
 class Questionnaire {
     constructor(standardQuestions, customQuestionsNum, groupName) {
         this.standardQuestions = standardQuestions; // 質問の配列
@@ -12,6 +14,9 @@ class Questionnaire {
         this.questionsContainer = document.getElementById('questions-container'); // 質問を表示するコンテナ
         this.nextButton = document.getElementById('next-button'); // 次へボタン
         this.finishMessage = document.getElementById('finish-message'); // 終了メッセージ
+        this.cameraContainer = document.getElementById('camera-container'); // カメラキャプチャ画面
+
+        this.cameraHandler = new CameraHandler('video', 'canvas', 'captured-image'); // カメラハンドラーのインスタンスを作成
 
         this.showStandardQuestion(this.currentQuestionIndex); // 最初の質問を表示
     }
@@ -20,52 +25,64 @@ class Questionnaire {
     showStandardQuestion(index) {
         this.questionsContainer.innerHTML = ''; // コンテナをクリア
 
-        // 新たなdiv要素を作成（グループ化するため）
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question';
+        if (this.standardQuestions[index] === 'image') {
+            this.showCameraCapture();
+        } else {
+            // 新たなdiv要素を作成（グループ化するため）
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
 
-        // 新たなlabel要素を作成（質問文を表示するため）
-        const questionLabel = document.createElement('label');
-        questionLabel.textContent = this.standardQuestions[index];
-        questionLabel.setAttribute('for', `answer-${index}`);
+            // 新たなlabel要素を作成（質問文を表示するため）
+            const questionLabel = document.createElement('label');
+            questionLabel.textContent = this.standardQuestions[index];
+            questionLabel.setAttribute('for', `answer-${index}`);
 
-        // 新たなinput要素を作成（回答を入力するため）
-        const questionInput = document.createElement('input');
-        questionInput.type = 'text';
-        questionInput.id = `answer-${index}`;
-        questionInput.name = `answer-${index}`;
+            // 新たなinput要素を作成（回答を入力するため）
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.id = `answer-${index}`;
+            questionInput.name = `answer-${index}`;
 
-        // div要素に追加
-        questionDiv.appendChild(questionLabel);
-        questionDiv.appendChild(document.createElement('br'));
-        questionDiv.appendChild(questionInput);
-        this.questionsContainer.appendChild(questionDiv);
+            // div要素に追加
+            questionDiv.appendChild(questionLabel);
+            questionDiv.appendChild(document.createElement('br'));
+            questionDiv.appendChild(questionInput);
+            this.questionsContainer.appendChild(questionDiv);
+        }
     }
 
     showCustomQuestion(customIndex) {
         this.questionsContainer.innerHTML = ''; // コンテナをクリア
+        this.cameraContainer.innerHTML = ''; // カメラコンテナをクリア
+        this.cameraContainer.style.display = 'none'; // カメラコンテナを隠す
 
+        // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
         questionDiv.className = 'custom-question';
 
+        // 新たなlabel要素を作成（質問文を表示するため）
         const questionLabel = document.createElement('label');
         questionLabel.textContent = `新しい質問${customIndex + 1}:`;
         questionLabel.setAttribute('for', `custom-question-${customIndex}`);
 
+        // 新たなinput要素を作成（質問を入力するため）
         const questionInput = document.createElement('input');
         questionInput.type = 'text';
         questionInput.id = `custom-question-${customIndex}`;
         questionInput.name = `custom-question-${customIndex}`;
 
+        // 新たなlabel要素を作成（回答欄を表示するため）
         const answerLabel = document.createElement('label');
         answerLabel.textContent = `回答${customIndex + 1}:`;
         answerLabel.setAttribute('for', `custom-answer-${customIndex}`);
 
+        // 新たなinput要素を作成（回答を入力するため）
         const answerInput = document.createElement('input');
         answerInput.type = 'text';
         answerInput.id = `custom-answer-${customIndex}`;
         answerInput.name = `custom-answer-${customIndex}`;
 
+        // div要素に追加
         questionDiv.appendChild(questionLabel);
         questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(questionInput);
@@ -73,19 +90,26 @@ class Questionnaire {
         questionDiv.appendChild(answerLabel);
         questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(answerInput);
-
         this.questionsContainer.appendChild(questionDiv);
     }
 
 
     // 次の質問に進むメソッド
     showNextQuestion() {
+         // カメラ起動中ならば，カメラを停止
+         if (this.cameraHandler.cameraRunning){
+            this.cameraHandler.stopCamera();
+        }
+
         // 通常の質問時
         if (this.currentQuestionIndex < this.standardQuestions.length) {
             // 入力された値を取得し，保存
-            const currentInput = document.getElementById(`answer-${this.currentQuestionIndex}`);
-            this.standardQuestionsInput.push(currentInput.value);
+            if (this.standardQuestions[this.currentQuestionIndex] !== 'image') {
+                const currentInput = document.getElementById(`answer-${this.currentQuestionIndex}`);
+                this.standardQuestionsInput.push(currentInput.value);
+            }
 
+            // 現在の質問インデックスをインクリメント
             this.currentQuestionIndex++;
 
             // 次の質問がある場合
@@ -171,10 +195,34 @@ class Questionnaire {
             console.error('Error:', error);
         });
     }
-}
 
-// Flaskから渡されたデータを取得，HTML上のコードと競合
-// const GROUP_NAME = "{{ group_name }}";
+    // カメラキャプチャ画面を表示するメソッド
+    showCameraCapture() {
+        // 質問コンテナをクリア
+        this.questionsContainer.innerHTML = '';
+
+        this.cameraContainer.style.display = 'block';
+
+        // カメラを起動
+        this.cameraHandler.startCamera();
+
+        // 撮影ボタンのクリックイベントリスナーを追加
+        document.getElementById('capture-button').addEventListener('click', () => {
+            const capturedDataUrl = this.cameraHandler.captureImage();
+            this.standardQuestionsInput.push(capturedDataUrl);
+    
+            // 撮影した画像を表示する要素を取得
+            const capturedImage = document.getElementById('captured-image');
+            capturedImage.src = capturedDataUrl;
+            capturedImage.style.display = 'block';
+    
+            // 撮影後に次へボタンを表示する
+            const nextButton = document.getElementById('next-button');
+            nextButton.style.display = 'block';
+        });
+    }
+
+}
 
 // 質問の配列を定義
 const STANDARD_QUESTIONS = [
@@ -183,7 +231,7 @@ const STANDARD_QUESTIONS = [
     "country",
     "favorite_things",
     "mbti",
-    "image" // バイナリーにあとで変換して！！
+    "image"
 ];
 
 const CUSTOM_QUESTIONS_NUM = 1;
