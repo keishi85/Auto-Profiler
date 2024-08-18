@@ -27,6 +27,8 @@ class Questionnaire {
 
         if (this.standardQuestions[index] === 'image') {
             this.showCameraCapture();
+        } else if (this.standardQuestions[index] === 'country') {
+            this.selectCountry(index);
         } else {
             // 新たなdiv要素を作成（グループ化するため）
             const questionDiv = document.createElement('div');
@@ -220,6 +222,37 @@ class Questionnaire {
             const nextButton = document.getElementById('next-button');
             nextButton.style.display = 'block';
         });
+    }
+
+    selectCountry(index){
+        // 新たなdiv要素を作成（グループ化するため）
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+
+        // 新たなlabel要素を作成（質問文を表示するため）
+        const questionLabel = document.createElement('label');
+        questionLabel.textContent = "Country:";
+        questionLabel.setAttribute('for', `answer-${index}`);
+
+        // 新たなselect要素を作成（選択式の質問）
+        const questionSelect = document.createElement('select');
+        questionSelect.id = `answer-${index}`;
+        questionSelect.name = `answer-${index}`;
+
+        // 国の選択肢を追加
+        const countries = ["Japan", "United States", "Canada", "Germany", "France", "Australia"];
+        countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            questionSelect.appendChild(option);
+        });
+
+        // div要素に追加
+        questionDiv.appendChild(questionLabel);
+        questionDiv.appendChild(document.createElement('br'));
+        questionDiv.appendChild(questionSelect);
+        this.questionsContainer.appendChild(questionDiv);
     }
 
 }
