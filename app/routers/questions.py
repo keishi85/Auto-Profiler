@@ -4,6 +4,8 @@ from flask import Blueprint, render_template, request
 from app.models import get_db, User
 from app.utils.analyze import generate_profile
 
+import base64
+
 
 questions_bp = Blueprint('questions', __name__)
 
@@ -18,10 +20,16 @@ def questions():
     country = data['country']
     favorite_things = data['favorite_things']
     mbti = data['mbti']
-    image_binary = data.get('image_binary', None)
+    
+    image_data_url = data.get('image', None)
+    if image_data_url:
+        image_data = base64.b64decode(image_data_url.split(',')[1])
+        # デバック用に画像を保存
+        with open('captured_image.png', 'wb') as f:
+            f.write(image_data)
 
     # 上記のデータ以外は質問とその回答
-    questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image_binary']}
+    questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image']}
 
     # 取得したデータを元にプロフィールを作成
     profile = generate_profile(data)
@@ -38,7 +46,7 @@ def questions():
         country=country,
         favorite_things=favorite_things,
         mbti=mbti,
-        image_data=image_binary,
+        image_data=image_data,
         questions_and_answers=questions_and_answers,
         profile=profile
     )

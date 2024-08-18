@@ -12,3 +12,15 @@ body {
     font-weight: bold;
     color: green;
 }
+
+#camera-container {
+    display: flex;
+    align-items: center;
+}
+#video {
+    border: 1px solid #ccc;
+}
+#captured-image {
+    margin-left: 20px;
+    border: 1px solid #ccc;
+}
