@@ -1,6 +1,10 @@
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
+from io import BytesIO
+from PIL import Image
+
+
 """
     取得したデータから画像生成を行うプログラム
     引数: 取得したデータ(key: value)
@@ -15,7 +19,7 @@ def generate_profile(data: dict)->bytes:
     入力された国名から国の部分を作成
     引数: 国名
 """
-def generate_country(country_name: str)->None:
+def generate_country(country_name: str)->Image.Image:
     # 手動でダウンロードしたシェープファイルのパスを指定
     shapefile_path = "app/static/data/map/110m_cultural/ne_110m_admin_0_countries.shp"
     world = gpd.read_file(shapefile_path)
@@ -59,3 +63,12 @@ def generate_country(country_name: str)->None:
         ax.axis('off')
 
         plt.savefig("country.png", bbox_inches='tight', pad_inches=0)
+
+        # 画像をバイトストリームに保存し、PIL Imageとして読み込む
+        buf = BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+        plt.close(fig)
+        buf.seek(0)
+        img = Image.open(buf)
+
+        return img

@@ -29,26 +29,27 @@ template_text = {
 
 
 class Profile:
-    def __init__(self, template_path, font_path, color=0, language="ENG"):
+    def __init__(self, template_path="../static/data/image/template.png", font_path="../static/data/font/nicoca_v2.ttf", color=0, language="ENG"):
         self.template_path = template_path
         self.color = color
         self.laguage = language
         self.output_profile = Image.open(self.template_path)
         self.font_path = font_path
 
-        self.create_profile()
+    """
+        data: 辞書(key: Value)
+    """
+    def create_profile(self, data):
 
-        self.save_profile()
-
-    def create_profile(self):
-
-        self.draw_text(text=template_text["name"], position=(550, 790))
-        self.draw_text(text=template_text["age"], position=(550, 980))
-        self.draw_text(text=template_text["favorite"], position=(250, 1350))
-        self.draw_text(text=template_text["country"], position=(1200, 160))
-        self.draw_text(text=template_text["mbti"], position=(1335, 1480))
+        self.draw_text(text=data["name"], position=(550, 790))
+        self.draw_text(text=data["age"], position=(550, 980))
+        self.draw_text(text=data["favorite"], position=(250, 1350))
+        self.draw_text(text=data["country"], position=(1200, 160))
+        self.draw_text(text=data["mbti"], position=(1335, 1480))
 
         self.draw_image(image=Image.open("./test/image/images.png").convert("RGBA"), position=(178, 192))
+
+        return self.output_profile
 
     def draw_image(self, image, position, image_size=(450, 450)):
         # 貼り付ける画像のリサイズ

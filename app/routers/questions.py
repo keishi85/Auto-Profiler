@@ -2,7 +2,8 @@ from flask import Blueprint, request, redirect, url_for
 from flask import Blueprint, render_template, request
 
 from app.models import get_db, User
-from app.utils.analyze import generate_profile
+from app.utils.analyze import generate_country
+from app.utils.profile import generate_profile
 
 import base64
 
@@ -27,12 +28,16 @@ def questions():
         # デバック用に画像を保存
         with open('captured_image.png', 'wb') as f:
             f.write(image_data)
+            data['image'] = image_data
 
     # 上記のデータ以外は質問とその回答
     questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image']}
 
+    # 国の地図を取得
+    country_map = generate_country(country)
+
     # 取得したデータを元にプロフィールを作成
-    profile = generate_profile(data)
+    profile = generate_profile(data, country_map)
 
     # MongoDBに接続し，Userクラスのインスタンスを作成
     db = get_db()
