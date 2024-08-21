@@ -1,16 +1,3 @@
-from pptx import Presentation
-from pathlib import Path
-import win32com.client
-
-
-from pptx import Presentation
-
-from io import BytesIO
-import os
-
-import aspose.slides as slides
-import aspose.pydrawing as drawing
-
 from PIL import Image, ImageDraw, ImageFont
 
 template_text = {
@@ -35,6 +22,7 @@ class Profile:
         self.laguage = language
         self.output_profile = Image.open(self.template_path)
         self.font_path = font_path
+        self.output_path = output_path
 
     """
         data: 辞書(key: Value)
@@ -68,7 +56,7 @@ class Profile:
     def save_profile(self):
 
         # 結果を保存
-        self.output_profile.save("./test/image/output_image.png")
+        self.output_profile.save(self.output_path)
 
         # または結果を表示
         self.output_profile.show()
@@ -96,18 +84,8 @@ def resize_and_center_crop(image, size=(256, 256)):
     return image
 
 
-def paste_image(background_path, overlay_path, output_path, position=(0, 0)):
-    """
-    背景画像に別の画像を貼り付ける関数
-    background_path: str - 背景画像のパス
-    overlay_path: str - 貼り付ける画像のパス
-    output_path: str - 保存する画像のパス
-    position: (x, y) - 貼り付ける位置
-    """
-
-
 if __name__ == "__main__":
-    template_path = r"test/image/template.png"
-    output_path = r"./test/image"
-    font_path = "./test/nicoca_v2.ttf"
-    profile = Profile(template_path=template_path, font_path=font_path)
+    template_path = r"./test/image/template.png"
+    output_path = r"./test/image/output.png"
+    font_path = r"./test/nicoca_v2.ttf"
+    profile = Profile(template_path=template_path, output_path=output_path, font_path=font_path)
