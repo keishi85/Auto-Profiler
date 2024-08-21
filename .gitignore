@@ -333,3 +333,4 @@ cython_debug/
 # *.pptx
 # *.jpg
 
+app/static/data/image

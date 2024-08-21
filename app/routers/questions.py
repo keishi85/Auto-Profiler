@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request
 
 from app.models import get_db, User
 from app.utils.analyze import generate_country
-from app.utils.profile import generate_profile
+from app.utils.profile import Profile
 
 import base64
 
@@ -26,7 +26,7 @@ def questions():
     if image_data_url:
         image_data = base64.b64decode(image_data_url.split(',')[1])
         # デバック用に画像を保存
-        with open('captured_image.png', 'wb') as f:
+        with open('/app/app/static/data/image/captured_image.png', 'wb') as f:
             f.write(image_data)
             data['image'] = image_data
 
@@ -37,7 +37,8 @@ def questions():
     country_map = generate_country(country)
 
     # 取得したデータを元にプロフィールを作成
-    profile = generate_profile(data, country_map)
+    profiler = Profile()
+    profile = profiler.create_profile(data=data, country_map=country_map)
 
     # MongoDBに接続し，Userクラスのインスタンスを作成
     db = get_db()
@@ -59,3 +60,7 @@ def questions():
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
     return render_template('complete.html', group_name=group_name)
+
+
+if __name__ == "__main__":
+    generate_country("Japan")

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 from io import BytesIO
 from PIL import Image
+import os
 
 
 """
@@ -21,8 +22,7 @@ def generate_profile(data: dict)->bytes:
 """
 def generate_country(country_name: str)->Image.Image:
     # 手動でダウンロードしたシェープファイルのパスを指定
-    shapefile_path = "app/static/data/map/110m_cultural/ne_110m_admin_0_countries.shp"
-    world = gpd.read_file(shapefile_path)
+    world = gpd.read_file("/app/app/static/data/map/ne_110m_admin_0_countries.shp")
 
     # 座標系の確認と変換
     if world.crs is None:
@@ -62,7 +62,7 @@ def generate_country(country_name: str)->Image.Image:
         # 目盛りを消す
         ax.axis('off')
 
-        plt.savefig("country.png", bbox_inches='tight', pad_inches=0)
+        plt.savefig("/app/app/static/data/image/country.png", bbox_inches='tight', pad_inches=0)
 
         # 画像をバイトストリームに保存し、PIL Imageとして読み込む
         buf = BytesIO()
@@ -71,4 +71,8 @@ def generate_country(country_name: str)->Image.Image:
         buf.seek(0)
         img = Image.open(buf)
 
-        return img
+    return img
+    
+
+if __name__ == "__main__":
+    generate_country("Japan")
