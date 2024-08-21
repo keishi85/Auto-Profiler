@@ -328,8 +328,8 @@ cython_debug/
 #.idea/
 
 
-*.png
-*.csv
-*.pptx
-*.jpg
+# *.png
+# *.csv
+# *.pptx
+# *.jpg
 
