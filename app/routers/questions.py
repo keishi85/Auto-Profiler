@@ -74,7 +74,7 @@ def questions():
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
     # profileの生成が終了したら，別のURLに切り替える
-    return jsonify({'message': 'Profile created'}), 200
+    return jsonify({'message': 'Profile created', 'group_name': group_name}), 200
 
 
 if __name__ == "__main__":
