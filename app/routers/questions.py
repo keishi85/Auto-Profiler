@@ -1,5 +1,7 @@
 from flask import Blueprint, request, redirect, url_for   
 from flask import Blueprint, render_template, request
+from io import BytesIO
+from flask import jsonify
 
 from app.models import get_db, User
 from app.utils.analyze import generate_country
@@ -36,9 +38,13 @@ def questions():
     # 国の地図を取得
     country_map = generate_country(country)
 
-    # 取得したデータを元にプロフィールを作成
+    # 取得したデータを元にプロフィールを作成, バイナリーデータに変換
     profiler = Profile()
     profile = profiler.create_profile(data=data, country_map=country_map)
+    
+    buffer = BytesIO()
+    profile.save(buffer, format="PNG")
+    profile_data = buffer.getvalue()
 
     # MongoDBに接続し，Userクラスのインスタンスを作成
     db = get_db()
@@ -54,12 +60,14 @@ def questions():
         mbti=mbti,
         image_data=image_data,
         questions_and_answers=questions_and_answers,
-        profile=profile
+        profile=profile_data    # バイナリデータとして保存
     )
 
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
-    return render_template('complete.html', group_name=group_name)
+    # profileの生成が終了したら，別のURLに切り替える
+    return jsonify({'message': 'Profile created'}), 200
+
 
 
 if __name__ == "__main__":

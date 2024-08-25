@@ -5,6 +5,25 @@ client = OpenAI(
     api_key=os.getenv("CHATGPT_API_KEY"),
 )
 
+"""
+    コミュニケーションのきっかけになるような項目が良いかも
+
+    - 話しかけてほしい指数（かまちょ）
+    - 天然指数
+    - イベント好き（飲み好き）
+    - アウトドア，インドア
+    - 遊びたい欲
+    - 素敵度（高めに設定）
+    - 天才指数
+    - おしゃべり度
+    - 彼氏感，彼女感
+    - 母性度合い
+    - ネジのハズレ度合い，ぶっ飛び度合い
+    - カリスマ性
+    - インフルエンス力
+    - 頭の回転速度
+"""
+
 def get_word_details(word):
     prompt = f"""Please explain the following about the word '{word}' in Japanese:
     1. The meaning of '{word}'

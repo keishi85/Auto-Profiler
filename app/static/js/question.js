@@ -192,6 +192,9 @@ class Questionnaire {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
+
+            //　リダイレクト
+            window.location.href = '/complete';
         })
         .catch((error) => {
             console.error('Error:', error);
