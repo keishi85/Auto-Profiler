@@ -334,3 +334,4 @@ cython_debug/
 # *.jpg
 
 app/static/data/image
+*txt

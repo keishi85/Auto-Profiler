@@ -6,6 +6,7 @@ from flask import jsonify
 from app.models import get_db, User
 from app.utils.analyze import generate_country
 from app.utils.profile import Profile
+from app.utils.gpt_integration import get_personal_specific
 
 import base64
 
@@ -63,11 +64,17 @@ def questions():
         profile=profile_data    # バイナリデータとして保存
     )
 
+    personal_specific = get_personal_specific(data, questions_and_answers)
+    with open('/app/app/static/data/test.txt', 'w') as f:
+        for trait, value in personal_specific.items():
+            f.write(f"From GPT\n")
+            f.write(f"{trait}: {value}\n")
+            print(f"{trait}: {value}")
+
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
     # profileの生成が終了したら，別のURLに切り替える
     return jsonify({'message': 'Profile created'}), 200
-
 
 
 if __name__ == "__main__":
