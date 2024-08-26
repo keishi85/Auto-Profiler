@@ -256,7 +256,7 @@ class Questionnaire {
         questionSelect.name = `answer-${index}`;
 
         // 国の選択肢を追加
-        const countries = ["Japan", "United States", "Canada", "Germany", "France", "Australia"];
+        const countries = ["Japan", "United States of America", "Canada", "Germany", "Australia", "India", "Chine", "United Kingdom"];
         countries.forEach(country => {
             const option = document.createElement('option');
             option.value = country;
