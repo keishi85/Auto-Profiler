@@ -1,28 +1,35 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>質問フォーム</title>
+    <title>Question From</title>
     <link rel="stylesheet" href="../static/js/question.js">
+    <link rel="stylesheet" href="../static/css/question.css">
 </head>
 <body>
 
-    <h1>質問フォーム</h1>
+    <h1>Answer Question</h1>
 
     <div id="questions-container"></div>
-
-    <button id="next-button">次へ</button>
-
-    <p id="finish-message" style="display: none;">終了しました。ありがとうございました！</p>
 
     <!-- カメラキャプチャ用の要素 -->
     <div id="camera-container" style="display: none;">
         <video id="video" width="640" height="480" autoplay></video>
+        <label id="video-label">Video Image</label>
+        <button id="capture-button">Capture</button>
+        <br>
         <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
-        <button id="capture-button">撮影</button>
-        <img id="captured-image" style="display: none;">
+        <img id="captured-image" width="640" height="480">
+        <label id="captured-label">Captured Image</label>
     </div>
+    <br>
+
+    <button id="next-button">Next</button>
+
+    <p id="finish-message" style="display: none;">Finish</p>
+
+    
 
     <!-- Flaskから渡されたgroup_nameをJavaScriptに埋め込む -->
     <script>
