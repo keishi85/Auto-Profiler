@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
+import math
 
 template_text = {
     "name": "Taro",
@@ -24,19 +25,23 @@ class Profile:
         self.font_path = font_path
         self.output_path = output_path
 
-        self.create_profile()
+        self.create_profile(text_list=template_text, picture="./test/image/images.png", country_img="./test/image/images.png")
 
         self.save_profile()
 
-    def create_profile(self):
+    def create_profile(self, text_list, picture, country_img):
 
-        self.draw_text(text=template_text["name"], position=(550, 790))
-        self.draw_text(text=template_text["age"], position=(550, 980))
-        self.draw_text(text=template_text["favorite"], position=(250, 1350))
-        self.draw_text(text=template_text["country"], position=(1200, 160))
-        self.draw_text(text=template_text["mbti"], position=(1335, 1480))
+        self.draw_text(text=text_list["name"], position=(550, 790))
+        self.draw_text(text=text_list["age"], position=(550, 980))
+        self.draw_text(text=text_list["favorite"], position=(250, 1350))
+        self.draw_text(text=text_list["country"], position=(1200, 160))
+        self.draw_text(text=text_list["mbti"], position=(1335, 1480))
 
-        self.draw_image(image=Image.open("./test/image/images.png").convert("RGBA"), position=(178, 192))
+        self.draw_image(image=Image.open(picture).convert("RGBA"), position=(178, 192))
+        self.draw_image(image=Image.open(country_img).convert("RGBA"), position=(400, 400))
+        self.draw_pentagon(center=(600, 600), radius=[100, 100, 100, 100, 100], fill_color=(20, 20, 20, 1))
+
+        self.draw_pentagon(center=(600, 600), radius=[100, 100, 100, 50, 50], fill_color=(128, 0, 0, 128))
 
     def draw_image(self, image, position, image_size=(450, 450)):
         # 貼り付ける画像のリサイズ
@@ -60,6 +65,28 @@ class Profile:
         # または結果を表示
         self.output_profile.show()
 
+    def draw_pentagon(self, center, radius, fill_color=(255, 0, 0), outline_color=(0, 0, 0)):
+        # 中心座標を指定
+        cx, cy = center
+
+        # 五角形の頂点を計算
+        points = []
+        for i in range(5):
+            angle = math.radians(72 * i - 90)  # 72度ごとに頂点を配置 (-90は最初の頂点を上に向けるため)
+            x = cx + radius[i] * math.cos(angle)
+            y = cy + radius[i] * math.sin(angle)
+            points.append((x, y))
+
+        draw = ImageDraw.Draw(self.output_profile)
+
+        # 五角形を描画
+        draw.polygon(points, fill=fill_color, outline=outline_color)
+
+        # 五角形の頂点の座標を出力
+        print("五角形の頂点座標:")
+        for i, point in enumerate(points):
+            print(f"頂点 {i + 1}: {point}")
+
 
 def resize_and_center_crop(image, size=(256, 256)):
     """
@@ -73,10 +100,10 @@ def resize_and_center_crop(image, size=(256, 256)):
     # サイズが大きい場合のみリサイズと切り抜きを行う
     if width > target_width or height > target_height:
         # リサイズを保持しつつ中心を切り抜く
-        left = (width - target_width) / 2
-        top = (height - target_height) / 2
-        right = (width + target_width) / 2
-        bottom = (height + target_height) / 2
+        left = (width - target_width) // 2
+        top = (height - target_height) // 2
+        right = (width + target_width) // 2
+        bottom = (height + target_height) // 2
 
         image = image.crop((left, top, right, bottom))
 
