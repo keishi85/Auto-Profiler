@@ -57,6 +57,7 @@ class Questionnaire {
         this.questionsContainer.innerHTML = ''; // コンテナをクリア
         this.cameraContainer.innerHTML = ''; // カメラコンテナをクリア
         this.cameraContainer.style.display = 'none'; // カメラコンテナを隠す
+        this.questionsContainer.style.display = 'block'; // 質問コンテナを表示
 
         // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
@@ -64,7 +65,7 @@ class Questionnaire {
 
         // 新たなlabel要素を作成（質問文を表示するため）
         const questionLabel = document.createElement('label');
-        questionLabel.textContent = `新しい質問${customIndex + 1}:`;
+        questionLabel.textContent = `New Question${customIndex + 1}:`;
         questionLabel.setAttribute('for', `custom-question-${customIndex}`);
 
         // 新たなinput要素を作成（質問を入力するため）
@@ -75,7 +76,7 @@ class Questionnaire {
 
         // 新たなlabel要素を作成（回答欄を表示するため）
         const answerLabel = document.createElement('label');
-        answerLabel.textContent = `回答${customIndex + 1}:`;
+        answerLabel.textContent = `Answer${customIndex + 1}:`;
         answerLabel.setAttribute('for', `custom-answer-${customIndex}`);
 
         // 新たなinput要素を作成（回答を入力するため）
@@ -202,8 +203,21 @@ class Questionnaire {
     showCameraCapture() {
         // 質問コンテナをクリア
         this.questionsContainer.innerHTML = '';
+        this.questionsContainer.style.display = 'none';
 
         this.cameraContainer.style.display = 'block';
+
+        // Nextボタンを非表示にする
+        this.nextButton.style.display = 'none';
+
+        // キャプチャー画像を表示する要素を取得
+        const capturedImage = document.getElementById('captured-image');
+        capturedImage.style.display = 'none';
+
+        // キャプチャー画像のラベルを取得し，非表示にする
+        const capturedLabel = document.getElementById('captured-label');
+        capturedLabel.style.display = 'none';
+        
 
         // カメラを起動
         this.cameraHandler.startCamera();
@@ -213,10 +227,12 @@ class Questionnaire {
             const capturedDataUrl = this.cameraHandler.captureImage();
             this.standardQuestionsInput.push(capturedDataUrl);
     
-            // 撮影した画像を表示する要素を取得
-            const capturedImage = document.getElementById('captured-image');
+            // キャプチャー画像を表示する
             capturedImage.src = capturedDataUrl;
             capturedImage.style.display = 'block';
+
+            // キャプチャー画像のラベルを表示する
+            capturedLabel.style.display = 'block';
     
             // 撮影後に次へボタンを表示する
             const nextButton = document.getElementById('next-button');
@@ -240,7 +256,7 @@ class Questionnaire {
         questionSelect.name = `answer-${index}`;
 
         // 国の選択肢を追加
-        const countries = ["Japan", "United States", "Canada", "Germany", "France", "Australia"];
+        const countries = ["Japan", "United States of America", "Canada", "Germany", "Australia", "India", "Chine", "United Kingdom"];
         countries.forEach(country => {
             const option = document.createElement('option');
             option.value = country;
