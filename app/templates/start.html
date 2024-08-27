@@ -4,18 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start - Enter Group Name</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/question.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/start.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Enter Your Group Name</h1>
-        <form action="{{ url_for('start.group') }}" method="POST">
-            <div class="form-group">
+    </div>
+    <h1>Enter Your Group Name</h1>
+    <div id="questions-container">
+        <form id="group-form" action="{{ url_for('start.group') }}" method="POST">
+            <div class='question'>
                 <label for="group_name">Group Name:</label>
-                <input type="text" id="group_name" name="group_name" required class="form-control" placeholder="Enter your group name">
+                <br>
+                <input type="text" id="group_name" name="group_name" required>
             </div>
-            <button type="submit" class="btn btn-primary">Next</button>
         </form>
     </div>
+    <button type="button" id="next-button" class="btn btn-primary">Next</button>
+
+    <script>
+        document.getElementById('next-button').addEventListener('click', function() {
+            document.getElementById('group-form').submit();
+        });
+    </script>
 </body>
 </html>
