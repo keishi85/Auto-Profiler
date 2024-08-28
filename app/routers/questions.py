@@ -1,5 +1,7 @@
-from flask import Blueprint, request, redirect, url_for   
+from flask import Blueprint, request, redirect, url_for
 from flask import Blueprint, render_template, request
+from io import BytesIO
+from flask import jsonify
 from io import BytesIO
 from flask import jsonify
 
@@ -7,34 +9,58 @@ from app.models import get_db, User
 from app.utils.analyze import generate_country
 from app.utils.profile import Profile
 from app.utils.gpt_integration import get_personal_specific
+from app.utils.analyze import generate_country
+from app.utils.profile import Profile
+from app.utils.gpt_integration import get_personal_specific
 
+from PIL import Image
 import base64
 
 
-questions_bp = Blueprint('questions', __name__)
+questions_bp = Blueprint("questions", __name__)
 
-@questions_bp.route('/questions', methods=['POST'])
+
+@questions_bp.route("/questions", methods=["POST"])
 def questions():
     # JSON形式で送られてきたデータ（質問項目とその回答）
     data = request.json
 
-    group_name = data['group_name']
-    name = data['name']
-    age = data['age']
-    country = data['country']
-    favorite_things = data['favorite_things']
-    mbti = data['mbti']
-    
-    image_data_url = data.get('image', None)
+    group_name = data["group_name"]
+    name = data["name"]
+    age = data["age"]
+    country = data["country"]
+    favorite_things = data["favorite_things"]
+    mbti = data["mbti"]
+
+    image_data_url = data.get("image", None)
     if image_data_url:
-        image_data = base64.b64decode(image_data_url.split(',')[1])
+        image_data = base64.b64decode(image_data_url.split(",")[1])
         # デバック用に画像を保存
         with open('/app/app/static/data/image/captured_image.png', 'wb') as f:
             f.write(image_data)
             data['image'] = image_data
 
     # 上記のデータ以外は質問とその回答
-    questions_and_answers = {key: value for key, value in data.items() if key not in ['group_name', 'name', 'age', 'country', 'favorite_things', 'mbti', 'image']}
+    questions_and_answers = {
+        key: value for key, value in data.items() if key not in ["group_name", "name", "age", "country", "favorite_things", "mbti", "image"]
+    }
+
+    # 国の地図を取得
+    country_map = generate_country(country)
+
+    text_list = {
+        "name": name,
+        "age": age,
+        "country": country,
+        "mbti": mbti,
+        "favorite": favorite_things,
+        "question1": "好きな近畿てょうは",
+        "question2": "question2",
+        "question3": "question3",
+        "answer1": "answer1question1question1",
+        "answer2": "answer2",
+        "answer3": "answer3",
+    }
 
     # 国の地図を取得
     country_map = generate_country(country)
