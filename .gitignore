@@ -335,3 +335,5 @@ cython_debug/
 
 app/static/data/image
 *txt
+
+.DS_Store

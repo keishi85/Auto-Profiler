@@ -40,10 +40,15 @@ def questions():
             f.write(image_data)
             data['image'] = image_data
 
+        # 画像をRGB形式に変換
+        picture = Image.open(BytesIO(data['image'])).convert("RGBA")
+
     # 上記のデータ以外は質問とその回答
     questions_and_answers = {
         key: value for key, value in data.items() if key not in ["group_name", "name", "age", "country", "favorite_things", "mbti", "image"]
     }
+    questions = list(questions_and_answers.keys())
+    answers = list(questions_and_answers.values())
 
     # 国の地図を取得
     country_map = generate_country(country)
@@ -54,20 +59,34 @@ def questions():
         "country": country,
         "mbti": mbti,
         "favorite": favorite_things,
-        "question1": "好きな近畿てょうは",
-        "question2": "question2",
-        "question3": "question3",
-        "answer1": "answer1question1question1",
-        "answer2": "answer2",
-        "answer3": "answer3",
+        "question1": questions[0] if len(questions) > 0 else "",
+        "question2": questions[1] if len(questions) > 1 else "",
+        "question3": questions[2] if len(questions) > 2 else "",
+        "answer1":   answers[0] if len(answers) > 0 else "",
+        "answer2":   answers[1] if len(answers) > 1 else "",
+        "answer3":   answers[2] if len(answers) > 2 else "",
     }
 
     # 国の地図を取得
     country_map = generate_country(country)
 
+    # グラフようの値を取得
+    personal_specific = get_personal_specific(data, questions_and_answers)
+    personalty = [val for val in personal_specific.values()]
+    with open('/app/app/static/data/test.txt', 'w') as f:
+        for trait, value in personal_specific.items():
+            f.write(f"From GPT\n")
+            f.write(f"{trait}: {value}\n")
+            print(f"{trait}: {value}")
+    print(personalty)
     # 取得したデータを元にプロフィールを作成, バイナリーデータに変換
     profiler = Profile()
-    profile = profiler.create_profile(data=data, country_map=country_map)
+    profile = profiler.create_profile(
+        text_list=text_list, 
+        personalty=personalty,
+        picture=picture,
+        country_img=country_map)
+    profiler.save_profile()
     
     buffer = BytesIO()
     profile.save(buffer, format="PNG")
@@ -89,13 +108,6 @@ def questions():
         questions_and_answers=questions_and_answers,
         profile=profile_data    # バイナリデータとして保存
     )
-
-    personal_specific = get_personal_specific(data, questions_and_answers)
-    with open('/app/app/static/data/test.txt', 'w') as f:
-        for trait, value in personal_specific.items():
-            f.write(f"From GPT\n")
-            f.write(f"{trait}: {value}\n")
-            print(f"{trait}: {value}")
 
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
