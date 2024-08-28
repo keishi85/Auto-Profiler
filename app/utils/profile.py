@@ -1,3 +1,6 @@
+from io import BytesIO
+import os
+
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
@@ -23,17 +26,26 @@ sub_color = [(0, 0, 0, 128), (70, 0, 70, 128), (0, 80, 100, 128), (170, 0, 0, 12
 
 
 class Profile:
-    def __init__(self, template_path, font_path, output_path=None, color=1, language="ENG"):
+    def __init__(
+        self,
+        template_path="/app/app/static/data/image/template",
+        font_path="/app/app/static/data/font/nicoca_v2.ttf",
+        output_path="/app/app/static/data/image/output.png",
+        color=1,
+        language="ENG",
+    ):
         self.template_path = template_path
         self.color = color
         self.laguage = language
         self.font_path = font_path
         self.output_path = output_path
 
+        # self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
+
         # if output_path is not None:
         #     self.save_profile()
 
-    def create_profile(self, text_list, picture, country_img):
+    def create_profile(self, text_list=template_text, personalty=template_personality, picture=None, country_img=None):
 
         # プロフィール帳のcolorを決定 (color=1:緑・紫, 2:紫・青, 3:黄・赤, 4:青・緑)
         self.deside_color(text_list["mbti"])
@@ -61,12 +73,16 @@ class Profile:
         return self.output_profile
 
     def draw_image(self, image, position, target_size=450):
+        if image is None:
+            image = Image.open("/app/app/static/data/image/no_image.png")
         # 貼り付ける画像のリサイズ
         image = resize_and_crop(image, target_size=target_size)
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
     def draw_country_image(self, image, position, image_size):
+        if image is None:
+            return
         image = image.resize(image_size)
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
@@ -83,7 +99,6 @@ class Profile:
         fixed_position = self.fix_text_positon(position, text_bbox, ancher)
 
         # 画像にテキストを描画
-
         draw.text(fixed_position, text, fill=color, font=font)
 
     def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=80, max_width=540):
@@ -150,12 +165,8 @@ class Profile:
             self.color = 1
 
     def save_profile(self):
-
         # 結果を保存
         self.output_profile.save(self.output_path)
-
-        # または結果を表示
-        self.output_profile.show()
 
     def draw_pentagon(self, center, radius, fill_color=(255, 0, 0), outline_color=(0, 0, 0)):
 
