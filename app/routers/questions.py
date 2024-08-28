@@ -41,7 +41,7 @@ def questions():
     }
 
     # 国の地図を取得
-    country_map = generate_country(country)
+    country_map, flag = generate_country(country)
 
     text_list = {
         "name": name,
@@ -64,6 +64,7 @@ def questions():
         personalty=[100, 20, 40, 50, 30],
         picture=Image.open("/app/app/static/data/image/capture_image.png").convert("RGBA"),
         country_img=country_map,
+        flag_img = flag,
     )
 
     buffer = BytesIO()
