@@ -66,7 +66,7 @@ def generate_country(country_name: str)->Image.Image:
 
         # 画像をバイトストリームに保存し、PIL Imageとして読み込む
         buf = BytesIO()
-        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
         plt.close(fig)
         buf.seek(0)
         img = Image.open(buf)
