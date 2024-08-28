@@ -5,6 +5,8 @@ from io import BytesIO
 from PIL import Image
 import os
 
+from flagpy import get_flag_img
+
 
 """
     取得したデータから画像生成を行うプログラム
@@ -71,7 +73,14 @@ def generate_country(country_name: str)->Image.Image:
         buf.seek(0)
         img = Image.open(buf)
 
-    return img
+
+        # 国旗の取得
+        flag_img = get_flag_img(country_name)
+        # 国旗の描画
+        if flag_img is None:
+            print(f"{country_name.capitalize()} の国旗が見つかりませんでした。")
+
+    return img, flag_img
     
 
 if __name__ == "__main__":
