@@ -1,13 +1,15 @@
 import { CameraHandler } from "./cameraHandler.js";
 
 class Questionnaire {
-    constructor(standardQuestions, customQuestionsNum, groupName) {
+    constructor(standardQuestions, customQuestionsNum, groupName, showStandardQuestions, customQuestions) {
         this.standardQuestions = standardQuestions; // 質問の配列
         this.standardQuestionsInput = []; // 入力された値を保持する配列
         this.customQuestionsNum = customQuestionsNum; // 追加質問の数
         this.customQuestions = []; // 追加質問の配列
         this.customQuestionsInput = []; // 追加質問の入力値を保持する配列
         this.groupName = groupName; // グループ名
+        this.showStandardQuestions = showStandardQuestions; // 表示する質問の配列
+        this.customQuestions = customQuestions; // 追加質問の配列
 
         this.currentQuestionIndex = 0; // 現在の質問のインデックス
 
@@ -27,8 +29,8 @@ class Questionnaire {
 
         if (this.standardQuestions[index] === 'image') {
             this.showCameraCapture();
-        } else if (this.standardQuestions[index] === 'country') {
-            this.selectCountry(index);
+        } else if (this.standardQuestions[index] === 'country' || this.standardQuestions[index] === 'mbti') {
+            this.selectChoices(index);
         } else {
             // 新たなdiv要素を作成（グループ化するため）
             const questionDiv = document.createElement('div');
@@ -36,7 +38,7 @@ class Questionnaire {
 
             // 新たなlabel要素を作成（質問文を表示するため）
             const questionLabel = document.createElement('label');
-            questionLabel.textContent = this.standardQuestions[index];
+            questionLabel.textContent = `${this.showStandardQuestions[index]}:`;
             questionLabel.setAttribute('for', `answer-${index}`);
 
             // 新たなinput要素を作成（回答を入力するため）
@@ -61,18 +63,25 @@ class Questionnaire {
 
         // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
-        questionDiv.className = 'custom-question';
+        questionDiv.className = 'question';
 
         // 新たなlabel要素を作成（質問文を表示するため）
         const questionLabel = document.createElement('label');
         questionLabel.textContent = `New Question${customIndex + 1}:`;
         questionLabel.setAttribute('for', `custom-question-${customIndex}`);
 
-        // 新たなinput要素を作成（質問を入力するため）
-        const questionInput = document.createElement('input');
-        questionInput.type = 'text';
-        questionInput.id = `custom-question-${customIndex}`;
-        questionInput.name = `custom-question-${customIndex}`;
+        // 新たなselect要素を作成（選択式の質問）
+        const questionSelect = document.createElement('select');
+        questionSelect.id = `custom-question-${customIndex}`;
+        questionSelect.name = `custom-question-${customIndex}`;
+
+        // 選択肢を追加
+        this.customQuestions.forEach(choice => {
+            const option = document.createElement('option');
+            option.value = choice;
+            option.textContent = choice;
+            questionSelect.appendChild(option);
+        });
 
         // 新たなlabel要素を作成（回答欄を表示するため）
         const answerLabel = document.createElement('label');
@@ -87,12 +96,12 @@ class Questionnaire {
 
         // div要素に追加
         questionDiv.appendChild(questionLabel);
+        questionDiv.appendChild(questionSelect);
         questionDiv.appendChild(document.createElement('br'));
-        questionDiv.appendChild(questionInput);
         questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(answerLabel);
-        questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(answerInput);
+        questionDiv.appendChild(document.createElement('br'));
         this.questionsContainer.appendChild(questionDiv);
     }
 
@@ -220,7 +229,9 @@ class Questionnaire {
         
 
         // カメラを起動
-        this.cameraHandler.startCamera();
+        document.getElementById('onCamera-button').addEventListener('click', () => {
+            this.cameraHandler.startCamera();
+        });
 
         // 撮影ボタンのクリックイベントリスナーを追加
         document.getElementById('capture-button').addEventListener('click', () => {
@@ -240,14 +251,14 @@ class Questionnaire {
         });
     }
 
-    selectCountry(index){
+    selectChoices(index) {
         // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
         questionDiv.className = 'question';
 
         // 新たなlabel要素を作成（質問文を表示するため）
         const questionLabel = document.createElement('label');
-        questionLabel.textContent = "Country:";
+        questionLabel.textContent = `${this.showStandardQuestions[index]}:`;
         questionLabel.setAttribute('for', `answer-${index}`);
 
         // 新たなselect要素を作成（選択式の質問）
@@ -255,12 +266,18 @@ class Questionnaire {
         questionSelect.id = `answer-${index}`;
         questionSelect.name = `answer-${index}`;
 
-        // 国の選択肢を追加
-        const countries = ["Japan", "United States of America", "Canada", "Germany", "Australia", "India", "Chine", "United Kingdom"];
-        countries.forEach(country => {
+        // 選択肢を追加
+        let choices = [];
+        if(this.standardQuestions[index] === 'country') {
+            choices = ["Japan", "United States of America", "Canada", "Germany", "Australia", "India", "China", "United Kingdom"];
+        } else if(this.standardQuestions[index] === 'mbti') {
+            choices = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP"];
+        }
+
+        choices.forEach(choice => {
             const option = document.createElement('option');
-            option.value = country;
-            option.textContent = country;
+            option.value = choice;
+            option.textContent = choice;
             questionSelect.appendChild(option);
         });
 
@@ -283,10 +300,25 @@ const STANDARD_QUESTIONS = [
     "image"
 ];
 
+const SHOW_STANDARD_QUESTIONS = [
+    "Name",
+    "Age",
+    "Country",
+    "Favorite Things",
+    "MBTI"
+];
+
+const CUSTOM_QUESTION_CHOICES = [
+    "What is your favorite color?",
+    "What is your favorite food?",
+    "What is your favorite animal?",
+    "What is your favorite movie?",
+    "What is your favorite music?"
+];
 const CUSTOM_QUESTIONS_NUM = 1;
 
 // Questionnaireクラスのインスタンスを作成
-const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM, GROUP_NAME);
+const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM, GROUP_NAME, SHOW_STANDARD_QUESTIONS, CUSTOM_QUESTION_CHOICES);
 
 // 次へボタンのクリックイベントリスナーを追加
 document.getElementById('next-button').addEventListener('click', () => {
