@@ -12,11 +12,10 @@
         <p>We appreciate your participation.</p>
         
         {% for name, profiles in profiles.items() %}
-            <h2>{{ name }}</h2>
+            <h2>Name:{{ name }}</h2>
             {% for profile in profiles %}
                 <div class="profile">
-                    <img src="{{ profile.profile_image_url }}" alt="Profile Image" style="width:100px;height:100px;">
-                    <p>{{ profile.name }}</p>
+                    <img src="{{ profile.profile_image_url }}" alt="Profile Image" style="width:70%;height:auot">
                 </div>
             {% endfor %}
         {% endfor %}
