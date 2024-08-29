@@ -67,9 +67,6 @@ def questions():
         "answer3":   answers[2] if len(answers) > 2 else "",
     }
 
-    # 国の地図を取得
-    country_map = generate_country(country)
-
     # グラフようの値を取得
     personal_specific = get_personal_specific(data, questions_and_answers)
     personalty = [val for val in personal_specific.values()]
