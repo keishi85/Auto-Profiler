@@ -3,6 +3,7 @@ from app.models import init_app
 
 from app.routers.start import start_bp
 from app.routers.questions import questions_bp
+from app.routers.complete import complete_bp
 
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ init_app(app)
 # ルーティングの登録
 app.register_blueprint(start_bp)
 app.register_blueprint(questions_bp)
+app.register_blueprint(complete_bp)
 
 
 @app.route('/')

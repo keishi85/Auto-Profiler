@@ -202,6 +202,9 @@ class Questionnaire {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
+
+            //　リダイレクト
+            window.location.href = `/complete?group_name=${encodeURIComponent(data.group_name)}`;
         })
         .catch((error) => {
             console.error('Error:', error);
