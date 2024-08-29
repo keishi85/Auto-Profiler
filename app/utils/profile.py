@@ -45,7 +45,7 @@ class Profile:
         # if output_path is not None:
         #     self.save_profile()
 
-    def create_profile(self, text_list=template_text, personalty=template_personality, picture=None, country_img=None):
+    def create_profile(self, text_list=template_text, personalty=template_personality, picture=None, country_img=None, flag_img = None):
 
         # プロフィール帳のcolorを決定 (color=1:緑・紫, 2:紫・青, 3:黄・赤, 4:青・緑)
         self.deside_color(text_list["mbti"])
@@ -68,6 +68,7 @@ class Profile:
 
         self.draw_image(image=picture, position=(178, 192))
         self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
+        self.draw_flag_image(image=flag_img, position=(900, 192), image_size=(200, 100))
         self.draw_pentagon(center=(1288, 1172), radius=template_personality)
 
         return self.output_profile
@@ -81,6 +82,13 @@ class Profile:
         self.output_profile.paste(image, position, image)
 
     def draw_country_image(self, image, position, image_size):
+        if image is None:
+            return
+        image = image.resize(image_size)
+        # 背景画像に貼り付ける
+        self.output_profile.paste(image, position, image)
+
+    def draw_flag_image(self, image, position, image_size):
         if image is None:
             return
         image = image.resize(image_size)
@@ -238,5 +246,6 @@ if __name__ == "__main__":
         text_list=template_text,
         picture=Image.open(r"./app\static\data\image\no_image.png").convert("RGBA"),
         country_img=Image.open(r"app\static\data\image\images.png").convert("RGBA"),
+        flag_img = Image.open(r"app\static\data\image\flag.png").convert("RGBA")
     )
     output_profile.show()

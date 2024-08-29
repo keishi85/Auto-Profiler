@@ -51,7 +51,7 @@ def questions():
     answers = list(questions_and_answers.values())
 
     # 国の地図を取得
-    country_map = generate_country(country)
+    country_map, flag = generate_country(country)
 
     text_list = {
         "name": name,
