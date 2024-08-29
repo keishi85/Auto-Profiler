@@ -1,7 +1,7 @@
 import { CameraHandler } from "./cameraHandler.js";
 
 class Questionnaire {
-    constructor(standardQuestions, customQuestionsNum, groupName, showStandardQuestions, customQuestions) {
+    constructor(standardQuestions, customQuestionsNum, groupName, showStandardQuestions, customQuestionChoices) {
         this.standardQuestions = standardQuestions; // 質問の配列
         this.standardQuestionsInput = []; // 入力された値を保持する配列
         this.customQuestionsNum = customQuestionsNum; // 追加質問の数
@@ -9,7 +9,7 @@ class Questionnaire {
         this.customQuestionsInput = []; // 追加質問の入力値を保持する配列
         this.groupName = groupName; // グループ名
         this.showStandardQuestions = showStandardQuestions; // 表示する質問の配列
-        this.customQuestions = customQuestions; // 追加質問の配列
+        this.customQuestionChoices = customQuestionChoices; // 追加質問の配列
 
         this.currentQuestionIndex = 0; // 現在の質問のインデックス
 
@@ -76,7 +76,7 @@ class Questionnaire {
         questionSelect.name = `custom-question-${customIndex}`;
 
         // 選択肢を追加
-        this.customQuestions.forEach(choice => {
+        this.customQuestionChoices.forEach(choice => {
             const option = document.createElement('option');
             option.value = choice;
             option.textContent = choice;
@@ -203,7 +203,7 @@ class Questionnaire {
         .then(data => {
             console.log('Success:', data);
 
-            //　リダイレクト
+            // リダイレクト
             window.location.href = `/complete?group_name=${encodeURIComponent(data.group_name)}`;
         })
         .catch((error) => {
@@ -318,7 +318,7 @@ const CUSTOM_QUESTION_CHOICES = [
     "What is your favorite movie?",
     "What is your favorite music?"
 ];
-const CUSTOM_QUESTIONS_NUM = 1;
+const CUSTOM_QUESTIONS_NUM = 3; // 追加質問の数
 
 // Questionnaireクラスのインスタンスを作成
 const questionnaire = new Questionnaire(STANDARD_QUESTIONS, CUSTOM_QUESTIONS_NUM, GROUP_NAME, SHOW_STANDARD_QUESTIONS, CUSTOM_QUESTION_CHOICES);
