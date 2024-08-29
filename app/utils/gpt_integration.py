@@ -7,6 +7,7 @@ load_dotenv()
 
 
 openai.api_key = api_key=os.getenv("CHATGPT_API_KEY")
+print(openai.api_key)
 
 # client = OpenAI(
 #     api_key="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",

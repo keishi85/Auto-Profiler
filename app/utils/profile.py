@@ -174,7 +174,7 @@ class Profile:
 
     def save_profile(self):
         # 結果を保存
-        self.output_profile.save(self.output_path)
+        self.output_profile.save("/app/app/static/data/image/output_profile.png")
 
     def draw_pentagon(self, center, radius, fill_color=(255, 0, 0), outline_color=(0, 0, 0)):
 
@@ -224,6 +224,16 @@ def resize_and_crop(image, target_size=450):
     # 画像をクロップ
     image = image.crop((left, top, right, bottom))
     return image
+
+
+def paste_image(background_path, overlay_path, output_path, position=(0, 0)):
+    """
+    背景画像に別の画像を貼り付ける関数
+    background_path: str - 背景画像のパス
+    overlay_path: str - 貼り付ける画像のパス
+    output_path: str - 保存する画像のパス
+    position: (x, y) - 貼り付ける位置
+    """
 
 
 if __name__ == "__main__":
