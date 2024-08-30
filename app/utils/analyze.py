@@ -51,14 +51,13 @@ def generate_country(country_name: str, color) -> Image.Image:
     # 世界地図全体を表示
     ax.set_extent([-180, 180, -90, 90], crs=ccrs.PlateCarree())
 
-    map_color = (float(color[0]) / 255.0, float(color[1]) / 255.0, float(color[2]) / 255.0, 0.3)
+    map_color = (float(color[0]) / 255.0, float(color[1]) / 255.0, float(color[2]) / 255.0, float(color[3] / 255.0))
 
     # 国を薄い紫色で塗りつぶし、境界線を表示しない
     ax.add_geometries(world["geometry"], crs=ccrs.PlateCarree(), facecolor=map_color, edgecolor="none")
 
     # 目盛りを消す
     ax.axis("off")
-
 
     # 国名が見つからない場合，世界地図を返す
     if country_shape.empty:
