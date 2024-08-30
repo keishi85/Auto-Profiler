@@ -12,16 +12,18 @@ template_text = {
     "age": "22",
     "country": "Mali",
     "mbti": "INFJ",
-    "favorite": "お肉を食べることが好きです\n焼肉に行きたい\n野菜も好きです",
-    "question1": "question1question1question1",
-    "question2": "question2",
+    "favorite": "お肉を食べることが好きです",
+    "question1": "好きな千葉県の市はどこですか",
+    "question2": "焼肉としゃぶしゃぶはどっちが好きですか",
     "question3": "question3",
-    "answer1": "answer1",
-    "answer2": "answer2",
+    "answer1": "鎌ケ谷市です！",
+    "answer2": "麻婆豆腐が好きです！",
     "answer3": "answer3",
 }
 
-template_personality = [500, 20, -70, 100, 10]
+personality_key = ["PositiveMonster", "Active", "JokeStar", "Ambitious", "Passion"]
+
+template_personality = [100, 100, 100, 100, 100]
 
 # 黒，紫，青，赤，緑
 sub_color = [(0, 0, 0, 128), (70, 0, 70, 128), (0, 80, 100, 128), (170, 0, 0, 128), (0, 60, 0, 128)]
@@ -31,8 +33,9 @@ class Profile:
     def __init__(
         self,
         template_path="/app/app/static/data/image/template",
-        font_path="/app/app/static/data/font/OtomanoKanji.ttf",
+        font_path="/app/app/static/data/font/HGRPP1.TTC",
         output_path="/app/app/static/data/image/output.png",
+        no_image_path="/app/app/static/data/image/no_image.png",
         color=1,
         language="ENG",
     ):
@@ -41,6 +44,7 @@ class Profile:
         self.laguage = language
         self.font_path = font_path
         self.output_path = output_path
+        self.no_image = Image.open(no_image_path).convert("RGBA")
 
         # self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
 
@@ -58,29 +62,30 @@ class Profile:
         # プロフィール帳のひな型を作成
         self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
 
-        self.draw_free_text(text=text_list["name"], position=(750, 822), ancher="right", max_width=250)
-        self.draw_free_text(text=text_list["age"], position=(750, 1011), ancher="right", max_width=250)
+        self.draw_free_text(text=text_list["name"], position=(750, 836), ancher="right", max_width=250)
+        self.draw_free_text(text=text_list["age"], position=(750, 1026), ancher="right", max_width=250)
         self.draw_free_text(text=text_list["favorite"], position=(480, 1380), ancher="center", max_width=540)
-        self.draw_free_text(text=text_list["country"], position=(1382, 217), ancher="bottom", max_width=460)
-        self.draw_text(text=text_list["mbti"], position=(1335, 1480))
+        self.draw_free_text(text=text_list["country"], position=(1382, 234), ancher="bottom", max_width=460)
+        self.draw_free_text(text=text_list["mbti"], position=(1340, 1521), ancher="center")
 
         self.draw_free_text(text=text_list["question1"], position=(160, 1750), ancher="left_top", max_width=1040)
         self.draw_free_text(text=text_list["question2"], position=(160, 1960), ancher="left_top", max_width=1040)
         self.draw_free_text(text=text_list["question3"], position=(160, 2170), ancher="left_top", max_width=1040)
-        self.draw_free_text(text=text_list["answer1"], position=(1570, 1885), ancher="right_bottom", max_width=840)
-        self.draw_free_text(text=text_list["answer2"], position=(1570, 2090), ancher="right_bottom", max_width=840)
-        self.draw_free_text(text=text_list["answer3"], position=(1570, 2305), ancher="right_bottom", max_width=840)
+        self.draw_free_text(text=text_list["answer1"], position=(1573, 1906), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["answer2"], position=(1573, 2111), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["answer3"], position=(1573, 2326), ancher="right_bottom", max_width=820)
 
         self.draw_face_image(image=picture, position=(178, 192))
         self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
         self.draw_flag_image(image=flag_img, position=(1500, 260), image_size=(150, 75))
-        self.draw_personality(center=(1283, 1160), radius=personality)
+        self.draw_personality(center=(1300, 1160), personality=personality)
 
         return self.output_profile
 
     def draw_face_image(self, image, position, target_size=450):
+        self.output_profile.paste(self.no_image, position, self.no_image)
         if image is None:
-            image = Image.open("/app/app/static/data/image/no_image.png")
+            return
         # 貼り付ける画像のリサイズ
         image = resize_and_crop(image, target_size=target_size).convert("RGBA")
         # 背景画像に貼り付ける
@@ -100,20 +105,6 @@ class Profile:
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
-    def draw_text(self, text, position, color=(0, 0, 0), font_size=80, ancher=None):
-        # フォントを定義
-        font = ImageFont.truetype(self.font_path, size=font_size)
-        # ImageDrawオブジェクトを作成
-        draw = ImageDraw.Draw(self.output_profile)
-
-        font = ImageFont.truetype(self.font_path, size=font_size)
-        text_bbox = draw.textbbox((0, 0), text, font=font)
-
-        fixed_position = self.fix_text_positon(position, text_bbox, ancher)
-
-        # 画像にテキストを描画
-        draw.text(fixed_position, text, fill=color, font=font)
-
     def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=80, max_width=540):
         # フォントを定義
         font = ImageFont.truetype(self.font_path, size=font_size)
@@ -130,7 +121,7 @@ class Profile:
             while min_size < max_size:
                 mid_size = (min_size + max_size) // 2
                 font = ImageFont.truetype(self.font_path, size=mid_size)
-                text_bbox = draw.textbbox((0, 0), text, font=font)
+                text_bbox = draw.textbbox((0, 0), text, font=font, align="center")
                 text_width = text_bbox[2] - text_bbox[0]
 
                 if text_width <= max_width:
@@ -142,7 +133,7 @@ class Profile:
             font_size = min_size - 1
 
         font = ImageFont.truetype(self.font_path, size=font_size)
-        text_bbox = draw.textbbox((0, 0), text, font=font)
+        text_bbox = draw.textbbox((position[0], position[1]), text, font=font)
 
         fixed_position = self.fix_text_positon(position, text_bbox, ancher=ancher)
         # 画像にテキストを描画
@@ -183,7 +174,16 @@ class Profile:
         # 結果を保存
         self.output_profile.save("/app/app/static/data/image/output_profile.png")
 
-    def draw_personality(self, center, radius, scale=2.0):
+    def draw_personality(self, center, personality, scale=2.0):
+
+        # 結果を格納するリスト
+        radius = []
+        # 辞書から値をリストに追加
+        for key in personality_key:
+            if key in personality:
+                radius.append(personality[key])
+            else:
+                radius.append(100)
 
         # personalityのvalueを(0, 100)に限定
         radius = np.array(radius).clip(0, 100)
@@ -236,26 +236,12 @@ def resize_and_crop(image, target_size=450):
     return image
 
 
-def paste_image(background_path, overlay_path, output_path, position=(0, 0)):
-    """
-    背景画像に別の画像を貼り付ける関数
-    background_path: str - 背景画像のパス
-    overlay_path: str - 貼り付ける画像のパス
-    output_path: str - 保存する画像のパス
-    position: (x, y) - 貼り付ける位置
-    """
-
-
 if __name__ == "__main__":
     template_path = r"app\static\data\image\template"
     output_path = r"./test/image/output.png"
-    font_path = r"app\static\data\font\OtomanoKanji.ttf"
-    profile = Profile(template_path=template_path, output_path=output_path, font_path=font_path)
+    font_path = r"app\static\data\font\HGRPP1.TTC"
+    no_image_path = r"app\static\data\image\no_image.png"
+    profile = Profile(template_path=template_path, output_path=output_path, font_path=font_path, no_image_path=no_image_path)
 
-    output_profile = profile.create_profile(
-        text_list=template_text,
-        picture=Image.open(r"app\static\data\image\no_image.png"),
-        country_img=Image.open(r"app\static\data\image\images.png"),
-        flag_img=Image.open(r"app\static\data\image\no_image.png"),
-    )
+    output_profile = profile.create_profile(text_list=template_text, picture=None)
     output_profile.show()
