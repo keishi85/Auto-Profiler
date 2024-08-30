@@ -176,3 +176,25 @@ input[type="text"]:focus, select:focus {
     margin: auto;
     display: block;
 }
+
+/* ローディングアニメーション用のスタイル */
+#loading-spinner {
+    border: 16px solid #f3f3f3; /* グレーの背景 */
+    border-top: 16px solid #3498db; /* 青色のスピナー */
+    border-radius: 50%;
+    width: 10vw;
+    height: 10vw;
+    animation: spin 2s linear infinite;
+    margin-top: 20px;
+    
+    position: fixed; /* 要素を固定 */
+    top: 60%;
+    left: 44%;
+    
+    display: none; /* 初期状態では非表示 */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

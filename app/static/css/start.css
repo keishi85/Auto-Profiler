@@ -66,7 +66,7 @@ input[type="text"]:focus, select:focus {
 }
 
 /* 次へボタン */
-#next-button {
+#next-button{
     background-color: #336699; /* ダークブルー */
     color: #fff;
     padding: 15px 30px;

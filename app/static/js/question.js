@@ -16,6 +16,7 @@ class Questionnaire {
 
         this.questionsContainer = document.getElementById('questions-container'); // 質問を表示するコンテナ
         this.nextButton = document.getElementById('next-button'); // 次へボタン
+        this.nextButton.disabled = true; // 初期状態では「次へ」ボタンを無効にする
         this.finishMessage = document.getElementById('finish-message'); // 終了メッセージ
         this.cameraContainer = document.getElementById('camera-container'); // カメラキャプチャ画面
 
@@ -47,6 +48,9 @@ class Questionnaire {
             questionInput.type = 'text';
             questionInput.id = `answer-${index}`;
             questionInput.name = `answer-${index}`;
+
+            // 入力フィールドにイベントリスナーを追加
+            questionInput.addEventListener('input', () => this.checkInput(questionInput));
 
             // div要素に追加
             questionDiv.appendChild(questionLabel);
@@ -95,6 +99,10 @@ class Questionnaire {
         answerInput.id = `custom-answer-${customIndex}`;
         answerInput.name = `custom-answer-${customIndex}`;
 
+        // 入力フィールドにイベントリスナーを追加
+        answerInput.addEventListener('input', () => this.checkInput(answerInput));
+
+
         // div要素に追加
         questionDiv.appendChild(questionLabel);
         questionDiv.appendChild(questionSelect);
@@ -109,6 +117,8 @@ class Questionnaire {
 
     // 次の質問に進むメソッド
     showNextQuestion() {
+        this.nextButton.disabled = true;
+
          // カメラ起動中ならば，カメラを停止
          if (this.cameraHandler.cameraRunning){
             this.cameraHandler.stopCamera();
@@ -141,8 +151,6 @@ class Questionnaire {
             const customIndex = this.currentQuestionIndex - this.standardQuestionNum;
             const customQuestion = document.getElementById(`custom-question-${customIndex}`);
             const customAnswer = document.getElementById(`custom-answer-${customIndex}`);
-            // this.customQuestions.push(customQuestion.value);
-            // this.customQuestionsInput.push(customAnswer.value);
             this.customQuestions[customIndex] = customQuestion.value;
             this.customQuestionsInput[customIndex] = customAnswer.value;
 
@@ -173,6 +181,9 @@ class Questionnaire {
 
     // Flaskに質問と回答をデータを送信するメソッド
     sendQuestionnaire() {
+        // ローディングアクションを表示
+        document.getElementById('loading-spinner').style.display = 'block';
+
         // 通常質問の質問と回答をオブジェクトに変換
         const standardQuestionsData = this.standardQuestions.reduce((acc, question, index) => {
             acc[question] = this.standardQuestionsInput[index] || ''; // 回答がない場合も空文字を設定
@@ -208,10 +219,19 @@ class Questionnaire {
             console.log('Success:', data);
 
             // リダイレクト
-            window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
+            // window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
+            // 3秒間フリーズさせる
+            setTimeout(() => {
+                // リダイレクト処理
+                window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
+            }, 5000); // 3000ミリ秒 = 3秒
         })
         .catch((error) => {
             console.error('Error:', error);
+        })
+        .finally(() => {
+            // リダイレクト前にローディングスピナーを非表示にする（念のため）
+            // document.getElementById('loading-spinner').style.display = 'none';
         });
     }
 
@@ -243,6 +263,7 @@ class Questionnaire {
         // 撮影後に次へボタンを表示する
         const nextButton = document.getElementById('next-button');
         nextButton.style.display = 'block';
+        this.nextButton.disabled = true;
 
         // 撮影ボタンのクリックイベントリスナーを追加
         document.getElementById('capture-button').addEventListener('click', () => {
@@ -256,14 +277,14 @@ class Questionnaire {
 
             // キャプチャー画像のラベルを表示する
             capturedLabel.style.display = 'block';
-    
-            // // 撮影後に次へボタンを表示する
-            // const nextButton = document.getElementById('next-button');
-            // nextButton.style.display = 'block';
+
+            this.nextButton.disabled = false; // 初期状態では「次へ」ボタンを無効にする
         });
     }
 
     selectChoices(index) {
+        this.nextButton.disabled = false;
+
         // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
         questionDiv.className = 'question';
@@ -298,6 +319,19 @@ class Questionnaire {
         questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(questionSelect);
         this.questionsContainer.appendChild(questionDiv);
+    }
+
+    checkInput(currentInput) {
+        // 現在表示されている質問のインデックスを取得
+        // const currentQuestionId = `answer-${this.currentQuestionIndex}`;
+        // const currentInput = document.getElementById(currentQuestionId);
+
+        // 入力がある場合は「次へ」ボタンを有効にし、ない場合は無効にする
+        if (currentInput && currentInput.value.trim() !== '') {
+            this.nextButton.disabled = false;
+        } else {
+            this.nextButton.disabled = true;
+        }
     }
 
 }
