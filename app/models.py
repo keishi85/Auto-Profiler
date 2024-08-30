@@ -49,7 +49,7 @@ class User:
         return self.collection.insert_one(user_data)
     
     def get_user_by_name(self, name):
-        return self.collection.find_one({"name": name})
+        return self.collection.fine_one({"name": name})
     
     # 返り値 :  (pymongo.cursor.Cursor) 全てのドキュメントを含む
     def get_user_by_group_name(self, group_name):
