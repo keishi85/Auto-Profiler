@@ -7,8 +7,6 @@ import math
 import os
 from app.utils.analyze import generate_country
 
-# from analyze import generate_country
-
 import numpy as np
 
 template_text = {

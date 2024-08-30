@@ -7,8 +7,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MONGO_URI=${MONGO_URI}
-      # - MONGO_URI=mongodb://mongo:27017/web_app_db
+      # - MONGO_URI=${MONGO_URI}
+      - MONGO_URI=mongodb://mongo:27017/web_app_db
     volumes:
       - .:/app
     depends_on:
