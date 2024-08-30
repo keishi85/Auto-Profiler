@@ -1,10 +1,11 @@
 from io import BytesIO
 import os
+import geopandas as gpd
 
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
-from analyze import generate_country
+from app.utils.analyze import generate_country
 import numpy as np
 
 template_text = {
@@ -36,20 +37,20 @@ class Profile:
         font_path="/app/app/static/data/font/HGRPP1.TTC",
         output_path="/app/app/static/data/image/output.png",
         no_image_path="/app/app/static/data/image/no_image.png",
+        shape_path="/app/app/static/data/map/ne_110m_admin_0_countries.shp",
         color=1,
         language="ENG",
     ):
         self.template_path = template_path
+        self.template = [None, None, None, None]
+        for i in range(4):
+            self.template[i] = Image.open(os.path.join(self.template_path, f"template{i+1:02d}.png")).convert("RGBA")
         self.color = color
         self.laguage = language
         self.font_path = font_path
         self.output_path = output_path
         self.no_image = Image.open(no_image_path).convert("RGBA")
-
-        # self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
-
-        # if output_path is not None:
-        #     self.save_profile()
+        self.world = gpd.read_file(shape_path)
 
     def create_profile(self, text_list=template_text, personality=template_personality, picture=None):
 
@@ -57,10 +58,10 @@ class Profile:
         self.deside_color(text_list["mbti"])
 
         # 国名から世界地図を生成
-        country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color])
+        country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color], world=self.world)
 
         # プロフィール帳のひな型を作成
-        self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
+        self.output_profile = self.template[self.color - 1]
 
         self.draw_free_text(text=text_list["name"], position=(750, 836), ancher="right", max_width=250)
         self.draw_free_text(text=text_list["age"], position=(750, 1026), ancher="right", max_width=250)
