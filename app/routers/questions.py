@@ -67,20 +67,20 @@ def questions():
         "answer3":   answers[2] if len(answers) > 2 else "",
     }
 
-    # グラフようの値を取得
+    # グラフようの値を取得(dict)
     personal_specific = get_personal_specific(data, questions_and_answers)
-    personalty = [ val for val in personal_specific.values()]
     with open('/app/app/static/data/test.txt', 'w') as f:
+        f.write("Personal Specific\n")
         for trait, value in personal_specific.items():
-            f.write(f"From GPT\n")
             f.write(f"{trait}: {value}\n")
             print(f"{trait}: {value}")
-    print(personalty)
+    print(personal_specific)
+
     # 取得したデータを元にプロフィールを作成, バイナリーデータに変換
     profiler = Profile()
     profile = profiler.create_profile(
         text_list=text_list, 
-        personality=personalty,
+        personality=personal_specific,
         picture=picture,
     )
     profiler.save_profile()
@@ -109,7 +109,14 @@ def questions():
     # profileの生成が終了したら，動画に切り替える
     # return redirect(url_for('complete.html', group_name=group_name))
     # profileの生成が終了したら，別のURLに切り替える
-    return jsonify({'message': 'Profile created', 'group_name': group_name}), 200
+    # return jsonify({'message': 'Profile created', 'group_name': group_name}), 200
+
+    # MongoDBへの挿入が成功したか確認
+    if result.acknowledged:
+        # profileの生成が終了したら，別のURLに切り替える
+        return jsonify({'message': 'Profile created', 'group_name': group_name}), 200
+    else:
+        return jsonify({'message': 'Failed to create profile'}), 500
 
 
 if __name__ == "__main__":
