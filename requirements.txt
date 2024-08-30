@@ -1,7 +1,6 @@
 Flask==2.3.2
 pymongo==4.6.0
 openai==0.28
-pymongo
 Cartopy==0.23.0
 certifi==2024.7.4
 charset-normalizer==3.3.2
@@ -37,3 +36,4 @@ six==1.16.0
 tifffile==2024.8.10
 tzdata==2024.1
 urllib3==2.2.2
+gunicorn

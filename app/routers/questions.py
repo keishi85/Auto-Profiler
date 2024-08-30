@@ -1,14 +1,9 @@
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, current_app
 from flask import Blueprint, render_template, request
-from io import BytesIO
-from flask import jsonify
 from io import BytesIO
 from flask import jsonify
 
 from app.models import get_db, User
-from app.utils.analyze import generate_country
-from app.utils.profile import Profile
-from app.utils.gpt_integration import get_personal_specific
 from app.utils.analyze import generate_country
 from app.utils.profile import Profile
 from app.utils.gpt_integration import get_personal_specific
@@ -36,12 +31,12 @@ def questions():
     if image_data_url:
         image_data = base64.b64decode(image_data_url.split(",")[1])
         # デバック用に画像を保存
-        with open('/app/app/static/data/image/captured_image.png', 'wb') as f:
-            f.write(image_data)
-            data['image'] = image_data
+        # with open("/app/app/static/data/image/captured_image.png", "wb") as f:
+        #     f.write(image_data)
+        #     data["image"] = image_data
 
         # 画像をRGB形式に変換
-        picture = Image.open(BytesIO(data['image'])).convert("RGBA")
+        picture = Image.open(BytesIO(image_data))
 
     # 上記のデータ以外は質問とその回答
     questions_and_answers = {
@@ -62,28 +57,32 @@ def questions():
         "question1": questions[0] if len(questions) > 0 else "",
         "question2": questions[1] if len(questions) > 1 else "",
         "question3": questions[2] if len(questions) > 2 else "",
-        "answer1":   answers[0] if len(answers) > 0 else "",
-        "answer2":   answers[1] if len(answers) > 1 else "",
-        "answer3":   answers[2] if len(answers) > 2 else "",
+        "answer1": answers[0] if len(answers) > 0 else "",
+        "answer2": answers[1] if len(answers) > 1 else "",
+        "answer3": answers[2] if len(answers) > 2 else "",
     }
 
     # グラフようの値を取得(dict)
     personal_specific = get_personal_specific(data, questions_and_answers)
-    with open('/app/app/static/data/test.txt', 'w') as f:
-        f.write("Personal Specific\n")
-        for trait, value in personal_specific.items():
-            f.write(f"{trait}: {value}\n")
-            print(f"{trait}: {value}")
-    print(personal_specific)
+
+    # with open("/app/app/static/data/test.txt", "w") as f:
+    #     f.write("Personal Specific\n")
+    #     for trait, value in personal_specific.items():
+    #         f.write(f"{trait}: {value}\n")
+    #         print(f"{trait}: {value}")
+
+    # print(personal_specific)
+
 
     # 取得したデータを元にプロフィールを作成, バイナリーデータに変換
     profiler = Profile()
     profile = profiler.create_profile(
-        text_list=text_list, 
+        text_list=text_list,
         personality=personal_specific,
         picture=picture,
     )
-    profiler.save_profile()
+    
+    # profiler.save_profile()
     
     buffer = BytesIO()
     profile.save(buffer, format="PNG")
@@ -103,7 +102,7 @@ def questions():
         mbti=mbti,
         image_data=image_data,
         questions_and_answers=questions_and_answers,
-        profile=profile_data    # バイナリデータとして保存
+        profile=profile_data,  # バイナリデータとして保存
     )
 
     # MongoDBへの挿入が成功したか確認
