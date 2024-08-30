@@ -76,10 +76,16 @@ def generate_country(country_name: str, color) -> Image.Image:
         ax.plot(country_centroid.x, country_centroid.y, marker="o", color="black", markersize=30, transform=ccrs.PlateCarree())
 
         # 国旗の取得
-        flag_img = get_flag_img(country_name)
+        if country_name == "United States of America":
+            flag_name = "The United States"
+        elif country_name == "United Kingdom":
+            flag_name = "The United Kingdom"
+        else:
+            flag_name = country_name
+        flag_img = get_flag_img(flag_name)
         # 国旗の描画
         if flag_img is None:
-            print(f"{country_name.capitalize()} の国旗が見つかりませんでした。")
+            print(f"{flag_name.capitalize()} の国旗が見つかりませんでした。")
 
         # plt.savefig("/app/app/static/data/image/country.png", bbox_inches="tight", pad_inches=0)
 
@@ -94,4 +100,4 @@ def generate_country(country_name: str, color) -> Image.Image:
 
 
 if __name__ == "__main__":
-    generate_country("Japan")
+    generate_country("Germany", (200, 200, 200))
