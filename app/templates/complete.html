@@ -16,9 +16,17 @@
     </div>
 
     <script>
+        // グループ名を取得
+        const groupName = "{{ group_name }}";
+        console.log(groupName);
+        
         document.getElementById('next-button').addEventListener('click', function() {
-            // 遷移先のURLを指定
-            window.location.href = "{{ url_for('complete.show_group_members') }}";
+
+            // URLを生成
+            const url = `{{ url_for('complete.show_group_members') }}?group_name=${encodeURIComponent(groupName)}`;
+
+            // ページ遷移
+            window.location.href = url;
         });
     </script>
 </body>

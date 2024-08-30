@@ -45,11 +45,6 @@ def show_group_members():
         name = profile['name']
         if name not in grouped_profiles:
             grouped_profiles[name] = []
-            
-        # grouped_profiles[name].append({
-        #     'profile_image_url': url_for('image.get_image', profile_id=name),  # name を profile_id として渡す
-        #     'name': profile['name']
-        # })
         
         # 画像データを取得し、base64エンコードしてHTMLに渡せるようにする
         image_data = profile.get('profile')
@@ -60,4 +55,4 @@ def show_group_members():
                 'name': profile['name']
             })
 
-    return render_template('complete.html', profiles=grouped_profiles, group_name=group_name)
+    return render_template('group_member.html', profiles=grouped_profiles, group_name=group_name)
