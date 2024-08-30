@@ -66,3 +66,24 @@ h2 {
     transform: translateY(0);
 }
 
+/* 保存ボタン */
+#save-button {
+    background-color: #336699; /* ダークブルー */
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#save-button:hover {
+    background-color: #264d73; /* さらに暗いブルー */
+    transform: translateY(-3px);
+}
+
+#save-button:active {
+    transform: translateY(0);
+}
+

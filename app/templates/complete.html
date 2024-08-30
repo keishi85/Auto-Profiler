@@ -12,22 +12,14 @@
         <div class="profile">
             <img src="{{ profile.profile_image_url }}" alt="Profile Image" id="profile-image">
         </div>
-        <button id="next-button">Show Group Member</button>
+        <button id="save-button">Save Image</button>
+        <br>
     </div>
+    <button id="next-button" data-next-url="{{ url_for('complete.show_group_members') }}">Show Group Member</button>
 
     <script>
-        // グループ名を取得
-        const groupName = "{{ group_name }}";
-        console.log(groupName);
-        
-        document.getElementById('next-button').addEventListener('click', function() {
-
-            // URLを生成
-            const url = `{{ url_for('complete.show_group_members') }}?group_name=${encodeURIComponent(groupName)}`;
-
-            // ページ遷移
-            window.location.href = url;
-        });
+        const GROUP_NAME = "{{ group_name }}";
     </script>
+    <script src="{{ url_for('static', filename='js/complete.js') }}" defer></script>
 </body>
 </html>
