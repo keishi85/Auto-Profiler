@@ -27,7 +27,7 @@ ENV FLASK_APP=app.main
 ENV FLASK_ENV=production
 
 # ポートを開放
-EXPOSE 8001
+EXPOSE 8000
 
 # アプリケーションを起動
 # CMD ["flask", "run", "--host=0.0.0.0", "--port=8001"]
