@@ -1,10 +1,14 @@
 from io import BytesIO
 import os
+import geopandas as gpd
 
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
 from app.utils.analyze import generate_country
+
+# from analyze import generate_country
+
 import numpy as np
 
 template_text = {
@@ -106,6 +110,8 @@ class Profile:
         self.output_profile.paste(image, position, image)
 
     def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=80, max_width=540):
+
+        text = capitalize_first_letter(text)
         # フォントを定義
         font = ImageFont.truetype(self.font_path, size=font_size)
         draw = ImageDraw.Draw(self.output_profile)
