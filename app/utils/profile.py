@@ -4,7 +4,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
-from analyze import generate_country
+from app.utils.analyze import generate_country
 import numpy as np
 
 template_text = {
