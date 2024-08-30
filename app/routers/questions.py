@@ -78,7 +78,12 @@ def questions():
         personality=personal_specific,
         picture=picture,
     )
+<<<<<<< HEAD
 
+=======
+    # profiler.save_profile()
+    
+>>>>>>> 0828517dde1fb997d14546a13dcfdae2c44007e7
     buffer = BytesIO()
     profile.save(buffer, format="PNG")
     profile_data = buffer.getvalue()
