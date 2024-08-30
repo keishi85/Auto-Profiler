@@ -1,10 +1,12 @@
 from io import BytesIO
 import os
+import geopandas as gpd
 
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
 from app.utils.analyze import generate_country
+
 import numpy as np
 
 template_text = {
@@ -13,12 +15,12 @@ template_text = {
     "country": "Mali",
     "mbti": "INFJ",
     "favorite": "お肉を食べることが好きです",
-    "question1": "好きな千葉県の市はどこですか",
+    "question1": "aaaaaaaaaaaaaaaaaaaaa",
     "question2": "焼肉としゃぶしゃぶはどっちが好きですか",
     "question3": "question3",
-    "answer1": "鎌ケ谷市です！",
+    "answer1": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "answer2": "麻婆豆腐が好きです！",
-    "answer3": "answer3",
+    "answer3": "answer",
 }
 
 personality_key = ["PositiveMonster", "Active", "JokeStar", "Ambitious", "Passion"]
@@ -36,20 +38,20 @@ class Profile:
         font_path="/app/app/static/data/font/HGRPP1.TTC",
         output_path="/app/app/static/data/image/output.png",
         no_image_path="/app/app/static/data/image/no_image.png",
+        shape_path="/app/app/static/data/map/ne_110m_admin_0_countries.shp",
         color=1,
         language="ENG",
     ):
         self.template_path = template_path
+        self.template = [None, None, None, None]
+        for i in range(4):
+            self.template[i] = Image.open(os.path.join(self.template_path, f"template{i+1:02d}.png")).convert("RGBA")
         self.color = color
         self.laguage = language
         self.font_path = font_path
         self.output_path = output_path
-        self.no_image = Image.open(no_image_path).convert("RGBA")
-
-        # self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
-
-        # if output_path is not None:
-        #     self.save_profile()
+        self.no_image = Image.open(no_image_path).convert("RGBA").resize((450, 450))
+        self.world = gpd.read_file(shape_path)
 
     def create_profile(self, text_list=template_text, personality=template_personality, picture=None):
 
@@ -60,7 +62,7 @@ class Profile:
         # country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color])
 
         # プロフィール帳のひな型を作成
-        self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
+        self.output_profile = self.template[self.color - 1]
 
         self.draw_free_text(text=text_list["name"], position=(750, 836), ancher="right", max_width=250)
         self.draw_free_text(text=text_list["age"], position=(750, 1026), ancher="right", max_width=250)
@@ -71,9 +73,9 @@ class Profile:
         self.draw_free_text(text=text_list["question1"], position=(160, 1750), ancher="left_top", max_width=1040)
         self.draw_free_text(text=text_list["question2"], position=(160, 1960), ancher="left_top", max_width=1040)
         self.draw_free_text(text=text_list["question3"], position=(160, 2170), ancher="left_top", max_width=1040)
-        self.draw_free_text(text=text_list["answer1"], position=(1573, 1906), ancher="right_bottom", max_width=820)
-        self.draw_free_text(text=text_list["answer2"], position=(1573, 2111), ancher="right_bottom", max_width=820)
-        self.draw_free_text(text=text_list["answer3"], position=(1573, 2326), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["answer1"], position=(1573, 1900), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["answer2"], position=(1573, 2105), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["answer3"], position=(1573, 2321), ancher="right_bottom", max_width=820)
 
         self.draw_face_image(image=picture, position=(178, 192))
         # self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
@@ -106,6 +108,8 @@ class Profile:
         self.output_profile.paste(image, position, image)
 
     def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=80, max_width=540):
+
+        text = capitalize_first_letter(text)
         # フォントを定義
         font = ImageFont.truetype(self.font_path, size=font_size)
         draw = ImageDraw.Draw(self.output_profile)
@@ -138,6 +142,13 @@ class Profile:
         fixed_position = self.fix_text_positon(position, text_bbox, ancher=ancher)
         # 画像にテキストを描画
         draw.text(fixed_position, text, fill=color, font=font)
+        # draw.rectangle(
+        #     (
+        #         (fixed_position[0], fixed_position[1]),
+        #         (fixed_position[0] + text_bbox[2] - text_bbox[0], fixed_position[1] + text_bbox[3] - text_bbox[1]),
+        #     ),
+        #     outline="black",
+        # )
 
     def fix_text_positon(self, position, text_bbox, ancher="center"):
         fixed_position = position
@@ -236,12 +247,32 @@ def resize_and_crop(image, target_size=450):
     return image
 
 
+def capitalize_first_letter(text):
+
+    if len(text) == 0:
+        return text
+    else:
+        # 1文字目を取得
+        first_char = text[0]
+
+        # 1文字目が半角の小文字英字かどうかを確認
+        if "a" <= first_char <= "z":
+            # 大文字に変換して、残りの文字列と結合
+            return first_char.upper() + text[1:]
+        else:
+            # 変更せずに返す
+            return text
+
+
 if __name__ == "__main__":
     template_path = r"app\static\data\image\template"
     output_path = r"./test/image/output.png"
     font_path = r"app\static\data\font\HGRPP1.TTC"
     no_image_path = r"app\static\data\image\no_image.png"
-    profile = Profile(template_path=template_path, output_path=output_path, font_path=font_path, no_image_path=no_image_path)
+    shape_path = r"app/static/data/map/ne_110m_admin_0_countries.shp"
+    profile = Profile(
+        template_path=template_path, output_path=output_path, font_path=font_path, no_image_path=no_image_path, shape_path=shape_path
+    )
 
     output_profile = profile.create_profile(text_list=template_text, picture=None)
     output_profile.show()
