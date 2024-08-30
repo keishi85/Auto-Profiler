@@ -8,16 +8,18 @@
 <body>
     <div id="profile-container">
         <h1>Thank you! Finish!</h1>
-        <h2>Group Name : {{ group_name }}</h2>
-        
-        {% for name, profiles in profiles.items() %}
-            <h2>Name:{{ name }}</h2>
-            {% for profile in profiles %}
-                <div class="profile">
-                    <img src="{{ profile.profile_image_url }}" alt="Profile Image" id="profile-image">
-                </div>
-            {% endfor %}
-        {% endfor %}
+        <h2>Name:{{ profile.name }}</h2>
+        <div class="profile">
+            <img src="{{ profile.profile_image_url }}" alt="Profile Image" id="profile-image">
+        </div>
+        <button id="next-button">Show Group Member</button>
     </div>
+
+    <script>
+        document.getElementById('next-button').addEventListener('click', function() {
+            // 遷移先のURLを指定
+            window.location.href = "{{ url_for('complete.show_group_members') }}";
+        });
+    </script>
 </body>
 </html>

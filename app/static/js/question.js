@@ -204,7 +204,7 @@ class Questionnaire {
             console.log('Success:', data);
 
             // リダイレクト
-            window.location.href = `/complete?group_name=${encodeURIComponent(data.group_name)}`;
+            window.location.href = `/complete?name=${encodeURIComponent(data.name)}`;
         })
         .catch((error) => {
             console.error('Error:', error);
