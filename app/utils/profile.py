@@ -57,7 +57,7 @@ class Profile:
         self.deside_color(text_list["mbti"])
 
         # 国名から世界地図を生成
-        country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color])
+        # country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color])
 
         # プロフィール帳のひな型を作成
         self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
@@ -76,8 +76,8 @@ class Profile:
         self.draw_free_text(text=text_list["answer3"], position=(1573, 2326), ancher="right_bottom", max_width=820)
 
         self.draw_face_image(image=picture, position=(178, 192))
-        self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
-        self.draw_flag_image(image=flag_img, position=(1500, 260), image_size=(150, 75))
+        # self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
+        # self.draw_flag_image(image=flag_img, position=(1500, 260), image_size=(150, 75))
         self.draw_personality(center=(1300, 1160), personality=personality)
 
         return self.output_profile
