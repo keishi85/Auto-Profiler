@@ -51,7 +51,7 @@ def questions():
     answers = list(questions_and_answers.values())
 
     # 国の地図を取得
-    country_map, flag = generate_country(country)
+    # country_map, flag = generate_country(country)
 
     text_list = {
         "name": name,
@@ -69,7 +69,7 @@ def questions():
 
     # グラフようの値を取得
     personal_specific = get_personal_specific(data, questions_and_answers)
-    personalty = [val for val in personal_specific.values()]
+    personalty = [ val for val in personal_specific.values()]
     with open('/app/app/static/data/test.txt', 'w') as f:
         for trait, value in personal_specific.items():
             f.write(f"From GPT\n")
@@ -80,9 +80,9 @@ def questions():
     profiler = Profile()
     profile = profiler.create_profile(
         text_list=text_list, 
-        personalty=personalty,
+        personality=personalty,
         picture=picture,
-        country_img=country_map)
+    )
     profiler.save_profile()
     
     buffer = BytesIO()
