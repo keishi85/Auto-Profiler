@@ -28,6 +28,7 @@ except Exception as e:
     print(e)
     
 app.config['MONGO_URI'] = uri
+# app.config['MONGO_URI'] = 'mongodb://mongo:27017/web_app_db'
 init_app(app)
 
 # ルーティングの登録
