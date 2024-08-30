@@ -1,9 +1,13 @@
 import os
 import openai
 from dotenv import load_dotenv
+import logging
 
 
 load_dotenv()
+# ロガーの設定
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # キー取得フラグの初期化
 api_key_missing = False
@@ -52,33 +56,34 @@ def get_personal_specific(data, questions_and_answers):
     # APIキーがない場合はデフォルト値を返す
     if api_key_missing:
         print("Returns default value because API key is not found.")
+        logger.warning("Returns default value because API key is not found.")
         return {
-            "ネジの外れ度": 80,
-            "カリスマ性": 50,
-            "素敵度": 40,
-            "天然度": 60,
-            "かまちょ度": 10,
+            "Ambitious": 80,
+            "Passion": 60,
+            "JokeStar": 90,
+            "Active": 70,
+            "PositiveMonster": 80,
         }
     
     # プロンプトの作成
     prompt = f"""
-    以下の情報を基に、次の5つの性格特性を0から100の範囲で数値化してください。
-    1. ネジの外れ度（どれだけぶっ飛んだ性格をしているか）
-    2. カリスマ性
-    3. 素敵度
-    4. 天然度（どれだけ性格が天然であるか）
-    5. かまちょ度（どれだけ話しかけて欲しい性格か）
+    Based on the following information, please evaluate the five personality traits on a scale of 0 to 100:
+    Ambitious 
+    Passion
+    Joke Star
+    Active 
+    Positive Monster
 
-    プロフィール情報:
-    - 年齢: {data['age']}
-    - 出身国: {data['country']}
-    - 好きなこと: {data['favorite_things']}
+    Profile Information:
+    - Age: {data['age']}
+    - Country of Origin: {data['country']}
+    - Interests: {data['favorite_things']}
     - MBTI: {data['mbti']}
     
-    質問と回答:
+    Questions and Answers:
     {questions_and_answers}
 
-    各項目を100点満点で評価し、辞書形式で結果を返してください。
+    Please return the results in a dictionary format with scores out of 100 for each trait.
     """
 
     # GPT-3.5 APIを呼び出し
@@ -99,13 +104,20 @@ def get_personal_specific(data, questions_and_answers):
     
     # 返り値を辞書形式に変換
     try:
+        print(result)
         return eval(result)  # 生成された結果が辞書形式であれば、それを評価して辞書に変換
     except:
         print("Could not parse GPT output as a dictionary.")
         print(result)
-        return {"error": "Could not parse GPT output as a dictionary."}
+        return {
+            "Ambitious": 80,
+            "Passion": 60,
+            "JokeStar": 90,
+            "Active": 70,
+            "PositiveMonster": 80,
+        }
     
-
+    
 if __name__ == '__main__':
     # サンプルデータの設定
     sample_data = {
@@ -127,3 +139,4 @@ if __name__ == '__main__':
     print("GPT-3.5による数値化結果:")
     for trait, score in result.items():
         print(f"{trait}: {score}")
+        
