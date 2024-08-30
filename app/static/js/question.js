@@ -219,19 +219,14 @@ class Questionnaire {
             console.log('Success:', data);
 
             // リダイレクト
-            // window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
-            // 3秒間フリーズさせる
-            setTimeout(() => {
-                // リダイレクト処理
-                window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
-            }, 5000); // 3000ミリ秒 = 3秒
+            window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
         })
         .catch((error) => {
             console.error('Error:', error);
         })
         .finally(() => {
             // リダイレクト前にローディングスピナーを非表示にする（念のため）
-            // document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('loading-spinner').style.display = 'none';
         });
     }
 
