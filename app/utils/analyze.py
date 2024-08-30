@@ -26,14 +26,9 @@ def generate_profile(data: dict) -> bytes:
 """
 
 
-<<<<<<< HEAD
 # def generate_country(country_name: str, color) -> Image.Image:
 #     # 手動でダウンロードしたシェープファイルのパスを指定
 #     world = gpd.read_file("./app/static/data/map/ne_110m_admin_0_countries.shp")
-=======
-def generate_country(country_name: str, color, world) -> Image.Image:
-    # 手動でダウンロードしたシェープファイルのパスを指定
->>>>>>> dbf6e2101a8f68545cadb910e9a7b9bd134bbf10
 
 #     # 座標系の確認と変換
 #     if world.crs is None:
