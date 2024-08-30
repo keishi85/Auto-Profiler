@@ -26,7 +26,8 @@ def generate_profile(data: dict) -> bytes:
 """
 
 
-# def generate_country(country_name: str, color) -> Image.Image:
+def generate_country(country_name: str, color) -> Image.Image:
+    pass
 #     # 手動でダウンロードしたシェープファイルのパスを指定
 #     world = gpd.read_file("./app/static/data/map/ne_110m_admin_0_countries.shp")
 
