@@ -23,7 +23,6 @@ client = MongoClient(
     uri, 
     server_api=ServerApi('1'),
     ssl=True,
-    ssl_cert_reqs=ssl.CERT_NONE
 )
 
 # Send a ping to confirm a successful connection
