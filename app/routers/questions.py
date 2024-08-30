@@ -105,17 +105,13 @@ def questions():
         profile=profile_data,  # バイナリデータとして保存
     )
 
-    # profileの生成が終了したら，動画に切り替える
-    # return redirect(url_for('complete.html', group_name=group_name))
-    # profileの生成が終了したら，別のURLに切り替える
-    # return jsonify({'message': 'Profile created', 'group_name': group_name}), 200
-
     # MongoDBへの挿入が成功したか確認
     if result.acknowledged:
         # profileの生成が終了したら，別のURLに切り替える
-        return jsonify({"message": "Profile created", "group_name": group_name}), 200
+        return jsonify({'message': 'Profile created', 'group_name': group_name, 'name':name}), 200
     else:
-        return jsonify({"message": "Failed to create profile"}), 500
+        return jsonify({'message': 'Failed to create profile'}), 500
+
 
 
 if __name__ == "__main__":

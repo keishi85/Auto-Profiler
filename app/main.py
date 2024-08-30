@@ -9,11 +9,9 @@ from app.models import init_app
 from app.routers.start import start_bp
 from app.routers.questions import questions_bp
 from app.routers.complete import complete_bp
-from app.routers.get_image import image_bp
 
 
 app = Flask(__name__)
-
 # MongoDBの初期化
 load_dotenv()
 uri = os.getenv("MONGO_URI")
@@ -36,12 +34,10 @@ except Exception as e:
 app.config['MONGO_URI'] = uri
 # app.config['MONGO_URI'] = 'mongodb://mongo:27017/web_app_db'
 init_app(app)
-
 # ルーティングの登録
 app.register_blueprint(start_bp)
 app.register_blueprint(questions_bp)
 app.register_blueprint(complete_bp)
-app.register_blueprint(image_bp)
 
 
 @app.route('/')

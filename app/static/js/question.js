@@ -3,10 +3,11 @@ import { CameraHandler } from "./cameraHandler.js";
 class Questionnaire {
     constructor(standardQuestions, customQuestionsNum, groupName, showStandardQuestions, customQuestionChoices) {
         this.standardQuestions = standardQuestions; // 質問の配列
-        this.standardQuestionsInput = []; // 入力された値を保持する配列
+        this.standardQuestionNum = standardQuestions.length; // 質問の数
+        this.standardQuestionsInput = new Array(this.standardQuestionNum); // 入力された値を保持する配列(質問の数で固定)
         this.customQuestionsNum = customQuestionsNum; // 追加質問の数
-        this.customQuestions = []; // 追加質問の配列
-        this.customQuestionsInput = []; // 追加質問の入力値を保持する配列
+        this.customQuestions = new Array(customQuestionsNum); // 追加質問の配列（質問数で固定）
+        this.customQuestionsInput = new Array(customQuestionsNum); // 追加質問の入力値を保持する配列
         this.groupName = groupName; // グループ名
         this.showStandardQuestions = showStandardQuestions; // 表示する質問の配列
         this.customQuestionChoices = customQuestionChoices; // 追加質問の配列
@@ -15,6 +16,7 @@ class Questionnaire {
 
         this.questionsContainer = document.getElementById('questions-container'); // 質問を表示するコンテナ
         this.nextButton = document.getElementById('next-button'); // 次へボタン
+        this.nextButton.disabled = true; // 初期状態では「次へ」ボタンを無効にする
         this.finishMessage = document.getElementById('finish-message'); // 終了メッセージ
         this.cameraContainer = document.getElementById('camera-container'); // カメラキャプチャ画面
 
@@ -28,7 +30,7 @@ class Questionnaire {
         this.questionsContainer.innerHTML = ''; // コンテナをクリア
 
         if (this.standardQuestions[index] === 'image') {
-            this.showCameraCapture();
+            this.showCameraCapture(index);
         } else if (this.standardQuestions[index] === 'country' || this.standardQuestions[index] === 'mbti') {
             this.selectChoices(index);
         } else {
@@ -46,6 +48,9 @@ class Questionnaire {
             questionInput.type = 'text';
             questionInput.id = `answer-${index}`;
             questionInput.name = `answer-${index}`;
+
+            // 入力フィールドにイベントリスナーを追加
+            questionInput.addEventListener('input', () => this.checkInput(questionInput));
 
             // div要素に追加
             questionDiv.appendChild(questionLabel);
@@ -94,6 +99,10 @@ class Questionnaire {
         answerInput.id = `custom-answer-${customIndex}`;
         answerInput.name = `custom-answer-${customIndex}`;
 
+        // 入力フィールドにイベントリスナーを追加
+        answerInput.addEventListener('input', () => this.checkInput(answerInput));
+
+
         // div要素に追加
         questionDiv.appendChild(questionLabel);
         questionDiv.appendChild(questionSelect);
@@ -108,24 +117,27 @@ class Questionnaire {
 
     // 次の質問に進むメソッド
     showNextQuestion() {
+        this.nextButton.disabled = true;
+
          // カメラ起動中ならば，カメラを停止
          if (this.cameraHandler.cameraRunning){
             this.cameraHandler.stopCamera();
         }
 
         // 通常の質問時
-        if (this.currentQuestionIndex < this.standardQuestions.length) {
+        if (this.currentQuestionIndex < this.standardQuestionNum) {
             // 入力された値を取得し，保存
             if (this.standardQuestions[this.currentQuestionIndex] !== 'image') {
                 const currentInput = document.getElementById(`answer-${this.currentQuestionIndex}`);
-                this.standardQuestionsInput.push(currentInput.value);
+                // this.standardQuestionsInput.push(currentInput.value);
+                this.standardQuestionsInput[this.currentQuestionIndex] = currentInput.value
             }
 
             // 現在の質問インデックスをインクリメント
             this.currentQuestionIndex++;
 
             // 次の質問がある場合
-            if (this.currentQuestionIndex < this.standardQuestions.length) {
+            if (this.currentQuestionIndex < this.standardQuestionNum) {
                 // 次の質問を表示
                 this.showStandardQuestion(this.currentQuestionIndex);
             }
@@ -136,16 +148,16 @@ class Questionnaire {
         // 追加質問時
         } else {
             // 入力された値を取得し，保存
-            const customIndex = this.currentQuestionIndex - this.standardQuestions.length;
+            const customIndex = this.currentQuestionIndex - this.standardQuestionNum;
             const customQuestion = document.getElementById(`custom-question-${customIndex}`);
             const customAnswer = document.getElementById(`custom-answer-${customIndex}`);
-            this.customQuestions.push(customQuestion.value);
-            this.customQuestionsInput.push(customAnswer.value);
+            this.customQuestions[customIndex] = customQuestion.value;
+            this.customQuestionsInput[customIndex] = customAnswer.value;
 
             this.currentQuestionIndex++;
 
-            if (this.currentQuestionIndex - this.standardQuestions.length < this.customQuestionsNum) {
-                this.showCustomQuestion(this.currentQuestionIndex - this.standardQuestions.length);
+            if (this.currentQuestionIndex - this.standardQuestionNum < this.customQuestionsNum) {
+                this.showCustomQuestion(this.currentQuestionIndex - this.standardQuestionNum);
             } else {
                 this.showFinishMessage();
             }
@@ -169,6 +181,9 @@ class Questionnaire {
 
     // Flaskに質問と回答をデータを送信するメソッド
     sendQuestionnaire() {
+        // ローディングアクションを表示
+        document.getElementById('loading-spinner').style.display = 'block';
+
         // 通常質問の質問と回答をオブジェクトに変換
         const standardQuestionsData = this.standardQuestions.reduce((acc, question, index) => {
             acc[question] = this.standardQuestionsInput[index] || ''; // 回答がない場合も空文字を設定
@@ -204,15 +219,19 @@ class Questionnaire {
             console.log('Success:', data);
 
             // リダイレクト
-            window.location.href = `/complete?group_name=${encodeURIComponent(data.group_name)}`;
+            window.location.href = `/complete?name=${encodeURIComponent(data.name)}&group_name=${encodeURIComponent(data.group_name)}`;
         })
         .catch((error) => {
             console.error('Error:', error);
+        })
+        .finally(() => {
+            // リダイレクト前にローディングスピナーを非表示にする（念のため）
+            document.getElementById('loading-spinner').style.display = 'none';
         });
     }
 
     // カメラキャプチャ画面を表示するメソッド
-    showCameraCapture() {
+    showCameraCapture(index) {
         // 質問コンテナをクリア
         this.questionsContainer.innerHTML = '';
         this.questionsContainer.style.display = 'none';
@@ -236,10 +255,16 @@ class Questionnaire {
             this.cameraHandler.startCamera();
         });
 
+        // 撮影後に次へボタンを表示する
+        const nextButton = document.getElementById('next-button');
+        nextButton.style.display = 'block';
+        this.nextButton.disabled = true;
+
         // 撮影ボタンのクリックイベントリスナーを追加
         document.getElementById('capture-button').addEventListener('click', () => {
             const capturedDataUrl = this.cameraHandler.captureImage();
-            this.standardQuestionsInput.push(capturedDataUrl);
+            // this.standardQuestionsInput.push(capturedDataUrl);
+            this.standardQuestionsInput[index] = capturedDataUrl;
     
             // キャプチャー画像を表示する
             capturedImage.src = capturedDataUrl;
@@ -247,14 +272,14 @@ class Questionnaire {
 
             // キャプチャー画像のラベルを表示する
             capturedLabel.style.display = 'block';
-    
-            // 撮影後に次へボタンを表示する
-            const nextButton = document.getElementById('next-button');
-            nextButton.style.display = 'block';
+
+            this.nextButton.disabled = false; // 初期状態では「次へ」ボタンを無効にする
         });
     }
 
     selectChoices(index) {
+        this.nextButton.disabled = false;
+
         // 新たなdiv要素を作成（グループ化するため）
         const questionDiv = document.createElement('div');
         questionDiv.className = 'question';
@@ -289,6 +314,19 @@ class Questionnaire {
         questionDiv.appendChild(document.createElement('br'));
         questionDiv.appendChild(questionSelect);
         this.questionsContainer.appendChild(questionDiv);
+    }
+
+    checkInput(currentInput) {
+        // 現在表示されている質問のインデックスを取得
+        // const currentQuestionId = `answer-${this.currentQuestionIndex}`;
+        // const currentInput = document.getElementById(currentQuestionId);
+
+        // 入力がある場合は「次へ」ボタンを有効にし、ない場合は無効にする
+        if (currentInput && currentInput.value.trim() !== '') {
+            this.nextButton.disabled = false;
+        } else {
+            this.nextButton.disabled = true;
+        }
     }
 
 }
