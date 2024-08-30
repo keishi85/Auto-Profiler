@@ -22,8 +22,8 @@ uri = os.getenv("MONGO_URI")
 client = MongoClient(
     uri, 
     server_api=ServerApi('1'),
-    ssl=True,
-    ssl_cert_reqs=ssl.CERT_NONE  # 証明書の検証を行わない
+    tls=True,
+    tlsAllowInvalidCertificates=False  # 本番環境では証明書検証を有効にする # 証明書の検証を行わない
 )
 
 # Send a ping to confirm a successful connection
