@@ -64,12 +64,15 @@ def questions():
 
     # グラフようの値を取得(dict)
     personal_specific = get_personal_specific(data, questions_and_answers)
+
     # with open("/app/app/static/data/test.txt", "w") as f:
     #     f.write("Personal Specific\n")
     #     for trait, value in personal_specific.items():
     #         f.write(f"{trait}: {value}\n")
     #         print(f"{trait}: {value}")
-    print(personal_specific)
+
+    # print(personal_specific)
+
 
     # 取得したデータを元にプロフィールを作成, バイナリーデータに変換
     profiler = Profile()
@@ -78,7 +81,9 @@ def questions():
         personality=personal_specific,
         picture=picture,
     )
-
+    
+    # profiler.save_profile()
+    
     buffer = BytesIO()
     profile.save(buffer, format="PNG")
     profile_data = buffer.getvalue()
