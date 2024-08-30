@@ -3,6 +3,7 @@ import os
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
+import ssl
 
 from app.models import init_app
 from app.routers.start import start_bp
@@ -18,7 +19,12 @@ load_dotenv()
 uri = os.getenv("MONGO_URI")
 
 # Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
+client = MongoClient(
+    uri, 
+    server_api=ServerApi('1'),
+    ssl=True,
+    ssl_cert_reqs=ssl.CERT_NONE
+)
 
 # Send a ping to confirm a successful connection
 try:
