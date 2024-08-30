@@ -5,9 +5,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# キー取得フラグの初期化
+api_key_missing = False
 
-openai.api_key = api_key=os.getenv("CHATGPT_API_KEY")
-print(openai.api_key)
+# APIキーの取得
+api_key = os.getenv("CHATGPT_API_KEY")
+if not api_key:
+    print("API key not found. Switch to default mode.")
+    api_key_missing = True
+else:
+    openai.api_key = api_key
+    print(openai.api_key)
 
 # client = OpenAI(
 #     api_key="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",
@@ -41,6 +49,17 @@ print(openai.api_key)
 """
 
 def get_personal_specific(data, questions_and_answers):
+    # APIキーがない場合はデフォルト値を返す
+    if api_key_missing:
+        print("Returns default value because API key is not found.")
+        return {
+            "ネジの外れ度": 80,
+            "カリスマ性": 50,
+            "素敵度": 40,
+            "天然度": 60,
+            "かまちょ度": 10,
+        }
+    
     # プロンプトの作成
     prompt = f"""
     以下の情報を基に、次の5つの性格特性を0から100の範囲で数値化してください。

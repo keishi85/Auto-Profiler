@@ -1,14 +1,9 @@
-from flask import Blueprint, render_template, request
-
+from flask import Blueprint, render_template, request, url_for
 from app.models import get_db, User
-
-"""
-    終了画面への遷移
-"""
 
 complete_bp = Blueprint('complete', __name__)
 
-@complete_bp.route('/complete', methods=['GET', 'POST'])
+@complete_bp.route('/complete', methods=['GET'])
 def complete():
     group_name = request.args.get('group_name')
 
@@ -25,6 +20,9 @@ def complete():
         name = profile['name']
         if name not in grouped_profiles:
             grouped_profiles[name] = []
-        grouped_profiles[name].append(profile)
+        grouped_profiles[name].append({
+            'profile_image_url': url_for('image.get_image', profile_id=name),  # name を profile_id として渡す
+            'name': profile['name']
+        })
 
-    return render_template('complete.html', profiles=grouped_profiles)
+    return render_template('complete.html', profiles=grouped_profiles, group_name=group_name)

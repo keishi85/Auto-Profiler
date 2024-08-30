@@ -4,24 +4,26 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
+from app.utils.analyze import generate_country
+import numpy as np
 
 template_text = {
     "name": "Taro",
     "age": "22",
-    "country": "Turkey",
-    "mbti": "ISTJ",
+    "country": "Mali",
+    "mbti": "INFJ",
     "favorite": "お肉を食べることが好きです\n焼肉に行きたい\n野菜も好きです",
     "question1": "question1question1question1",
     "question2": "question2",
     "question3": "question3",
-    "answer1": "answer1question1question1",
+    "answer1": "answer1",
     "answer2": "answer2",
     "answer3": "answer3",
 }
 
-template_personality = [80, 100, 50, 60, 75]
+template_personality = [500, 20, -70, 100, 10]
 
-# 黒，
+# 黒，紫，青，赤，緑
 sub_color = [(0, 0, 0, 128), (70, 0, 70, 128), (0, 80, 100, 128), (170, 0, 0, 128), (0, 60, 0, 128)]
 
 
@@ -29,7 +31,7 @@ class Profile:
     def __init__(
         self,
         template_path="/app/app/static/data/image/template",
-        font_path="/app/app/static/data/font/nicoca_v2.ttf",
+        font_path="/app/app/static/data/font/OtomanoKanji.ttf",
         output_path="/app/app/static/data/image/output.png",
         color=1,
         language="ENG",
@@ -45,53 +47,56 @@ class Profile:
         # if output_path is not None:
         #     self.save_profile()
 
-    def create_profile(self, text_list=template_text, personalty=template_personality, picture=None, country_img=None, flag_img = None):
+    def create_profile(self, text_list=template_text, personality=template_personality, picture=None):
 
         # プロフィール帳のcolorを決定 (color=1:緑・紫, 2:紫・青, 3:黄・赤, 4:青・緑)
         self.deside_color(text_list["mbti"])
 
+        # 国名から世界地図を生成
+        country_img, flag_img = generate_country(country_name=text_list["country"], color=sub_color[self.color])
+
         # プロフィール帳のひな型を作成
         self.output_profile = Image.open(os.path.join(self.template_path, f"template{self.color:02d}.png")).convert("RGBA")
 
-        self.draw_free_text(text=text_list["name"], position=(750, 820), ancher="right", max_width=250)
-        self.draw_text(text=text_list["age"], position=(750, 1000), ancher="right")
+        self.draw_free_text(text=text_list["name"], position=(750, 822), ancher="right", max_width=250)
+        self.draw_free_text(text=text_list["age"], position=(750, 1011), ancher="right", max_width=250)
         self.draw_free_text(text=text_list["favorite"], position=(480, 1380), ancher="center", max_width=540)
-        self.draw_text(text=text_list["country"], position=(1200, 160))
+        self.draw_free_text(text=text_list["country"], position=(1382, 217), ancher="bottom", max_width=460)
         self.draw_text(text=text_list["mbti"], position=(1335, 1480))
 
-        self.draw_free_text(text=text_list["question1"], position=(160, 1770), ancher="left", max_width=1040)
-        self.draw_free_text(text=text_list["question2"], position=(160, 1980), ancher="left", max_width=1040)
-        self.draw_free_text(text=text_list["question3"], position=(160, 2190), ancher="left", max_width=1040)
-        self.draw_free_text(text=text_list["answer1"], position=(1570, 1850), ancher="right", max_width=840)
-        self.draw_free_text(text=text_list["answer2"], position=(1570, 2052), ancher="right", max_width=840)
-        self.draw_free_text(text=text_list["answer3"], position=(1570, 2270), ancher="right", max_width=840)
+        self.draw_free_text(text=text_list["question1"], position=(160, 1750), ancher="left_top", max_width=1040)
+        self.draw_free_text(text=text_list["question2"], position=(160, 1960), ancher="left_top", max_width=1040)
+        self.draw_free_text(text=text_list["question3"], position=(160, 2170), ancher="left_top", max_width=1040)
+        self.draw_free_text(text=text_list["answer1"], position=(1570, 1885), ancher="right_bottom", max_width=840)
+        self.draw_free_text(text=text_list["answer2"], position=(1570, 2090), ancher="right_bottom", max_width=840)
+        self.draw_free_text(text=text_list["answer3"], position=(1570, 2305), ancher="right_bottom", max_width=840)
 
-        self.draw_image(image=picture, position=(178, 192))
+        self.draw_face_image(image=picture, position=(178, 192))
         self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
-        self.draw_flag_image(image=flag_img, position=(900, 192), image_size=(200, 100))
-        self.draw_pentagon(center=(1288, 1172), radius=template_personality)
+        self.draw_flag_image(image=flag_img, position=(1500, 260), image_size=(150, 75))
+        self.draw_personality(center=(1283, 1160), radius=personality)
 
         return self.output_profile
 
-    def draw_image(self, image, position, target_size=450):
+    def draw_face_image(self, image, position, target_size=450):
         if image is None:
             image = Image.open("/app/app/static/data/image/no_image.png")
         # 貼り付ける画像のリサイズ
-        image = resize_and_crop(image, target_size=target_size)
+        image = resize_and_crop(image, target_size=target_size).convert("RGBA")
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
     def draw_country_image(self, image, position, image_size):
         if image is None:
             return
-        image = image.resize(image_size)
+        image = image.resize(image_size).convert("RGBA")
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
     def draw_flag_image(self, image, position, image_size):
         if image is None:
             return
-        image = image.resize(image_size)
+        image = image.resize(image_size).convert("RGBA")
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
@@ -159,6 +164,8 @@ class Profile:
             fixed_position = (position[0] - text_width // 2, position[1])
         elif ancher == "bottom":
             fixed_position = (position[0] - text_width // 2, position[1] - text_height)
+        elif ancher == "right_bottom":
+            fixed_position = (position[0] - text_width, position[1] - text_height)
 
         return fixed_position
 
@@ -176,7 +183,10 @@ class Profile:
         # 結果を保存
         self.output_profile.save("/app/app/static/data/image/output_profile.png")
 
-    def draw_pentagon(self, center, radius, fill_color=(255, 0, 0), outline_color=(0, 0, 0)):
+    def draw_personality(self, center, radius, scale=2.0):
+
+        # personalityのvalueを(0, 100)に限定
+        radius = np.array(radius).clip(0, 100)
 
         # 五角形を描画するための新しい画像を作成
         pentagon_image = Image.new("RGBA", self.output_profile.size, (255, 255, 255, 0))
@@ -188,8 +198,8 @@ class Profile:
         points = []
         for i in range(5):
             angle = math.radians(72 * i - 90)  # 72度ごとに頂点を配置 (-90は最初の頂点を上に向けるため)
-            x = cx + 2.5 * radius[i] * math.cos(angle)
-            y = cy + 2.5 * radius[i] * math.sin(angle)
+            x = cx + scale * radius[i] * math.cos(angle)
+            y = cy + scale * radius[i] * math.sin(angle)
             points.append((x, y))
 
         draw.polygon(points, fill=sub_color[self.color])
@@ -239,13 +249,13 @@ def paste_image(background_path, overlay_path, output_path, position=(0, 0)):
 if __name__ == "__main__":
     template_path = r"app\static\data\image\template"
     output_path = r"./test/image/output.png"
-    font_path = r"app\static\data\font\nicoca_v2.ttf"
+    font_path = r"app\static\data\font\OtomanoKanji.ttf"
     profile = Profile(template_path=template_path, output_path=output_path, font_path=font_path)
 
     output_profile = profile.create_profile(
         text_list=template_text,
-        picture=Image.open(r"./app\static\data\image\no_image.png").convert("RGBA"),
-        country_img=Image.open(r"app\static\data\image\images.png").convert("RGBA"),
-        flag_img = Image.open(r"app\static\data\image\flag.png").convert("RGBA")
+        picture=Image.open(r"app\static\data\image\no_image.png"),
+        country_img=Image.open(r"app\static\data\image\images.png"),
+        flag_img=Image.open(r"app\static\data\image\no_image.png"),
     )
     output_profile.show()

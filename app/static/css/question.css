@@ -96,7 +96,7 @@ input[type="text"]:focus, select:focus {
 #camera-container {
     padding: 20px;
     width: 70%;
-    margin: 20px, 0;
+    margin: 20px 0;
     display: flex;
     flex-direction: column; /* 要素を縦に並べる */
     text-align: center;
@@ -128,6 +128,26 @@ input[type="text"]:focus, select:focus {
     transform: translateY(0);
 }
 
+#onCamera-button {
+    background-color: #336699; /* ダークブルー */
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#onCamera-button:hover {
+    background-color: #264d73; /* さらに暗いブルー */
+    transform: translateY(-3px);
+}
+
+#onCamera-button:active {
+    transform: translateY(0);
+}
+
 #video-label {
     display: block;
     font-size: 1.7em;
@@ -136,8 +156,8 @@ input[type="text"]:focus, select:focus {
 }
 
 #video {
-    width: 640px;
-    height: 480px;
+    width: 70%;
+    height: auto;
     margin: 0, auto;
     display: inline-block;
 }
@@ -151,8 +171,8 @@ input[type="text"]:focus, select:focus {
 
 /* 撮影された画像 */
 #captured-image {
-    width: 640px;
-    height: 480px;
+    width: 70%;
+    height: auto;
     margin: auto;
     display: block;
 }
