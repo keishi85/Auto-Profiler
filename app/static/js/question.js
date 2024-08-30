@@ -3,10 +3,11 @@ import { CameraHandler } from "./cameraHandler.js";
 class Questionnaire {
     constructor(standardQuestions, customQuestionsNum, groupName, showStandardQuestions, customQuestionChoices) {
         this.standardQuestions = standardQuestions; // 質問の配列
-        this.standardQuestionsInput = []; // 入力された値を保持する配列
+        this.standardQuestionNum = standardQuestions.length; // 質問の数
+        this.standardQuestionsInput = new Array(this.standardQuestionNum); // 入力された値を保持する配列(質問の数で固定)
         this.customQuestionsNum = customQuestionsNum; // 追加質問の数
-        this.customQuestions = []; // 追加質問の配列
-        this.customQuestionsInput = []; // 追加質問の入力値を保持する配列
+        this.customQuestions = new Array(customQuestionsNum); // 追加質問の配列（質問数で固定）
+        this.customQuestionsInput = new Array(customQuestionsNum); // 追加質問の入力値を保持する配列
         this.groupName = groupName; // グループ名
         this.showStandardQuestions = showStandardQuestions; // 表示する質問の配列
         this.customQuestionChoices = customQuestionChoices; // 追加質問の配列
@@ -28,7 +29,7 @@ class Questionnaire {
         this.questionsContainer.innerHTML = ''; // コンテナをクリア
 
         if (this.standardQuestions[index] === 'image') {
-            this.showCameraCapture();
+            this.showCameraCapture(index);
         } else if (this.standardQuestions[index] === 'country' || this.standardQuestions[index] === 'mbti') {
             this.selectChoices(index);
         } else {
@@ -114,18 +115,19 @@ class Questionnaire {
         }
 
         // 通常の質問時
-        if (this.currentQuestionIndex < this.standardQuestions.length) {
+        if (this.currentQuestionIndex < this.standardQuestionNum) {
             // 入力された値を取得し，保存
             if (this.standardQuestions[this.currentQuestionIndex] !== 'image') {
                 const currentInput = document.getElementById(`answer-${this.currentQuestionIndex}`);
-                this.standardQuestionsInput.push(currentInput.value);
+                // this.standardQuestionsInput.push(currentInput.value);
+                this.standardQuestionsInput[this.currentQuestionIndex] = currentInput.value
             }
 
             // 現在の質問インデックスをインクリメント
             this.currentQuestionIndex++;
 
             // 次の質問がある場合
-            if (this.currentQuestionIndex < this.standardQuestions.length) {
+            if (this.currentQuestionIndex < this.standardQuestionNum) {
                 // 次の質問を表示
                 this.showStandardQuestion(this.currentQuestionIndex);
             }
@@ -136,16 +138,18 @@ class Questionnaire {
         // 追加質問時
         } else {
             // 入力された値を取得し，保存
-            const customIndex = this.currentQuestionIndex - this.standardQuestions.length;
+            const customIndex = this.currentQuestionIndex - this.standardQuestionNum;
             const customQuestion = document.getElementById(`custom-question-${customIndex}`);
             const customAnswer = document.getElementById(`custom-answer-${customIndex}`);
-            this.customQuestions.push(customQuestion.value);
-            this.customQuestionsInput.push(customAnswer.value);
+            // this.customQuestions.push(customQuestion.value);
+            // this.customQuestionsInput.push(customAnswer.value);
+            this.customQuestions[customIndex] = customQuestion.value;
+            this.customQuestionsInput[customIndex] = customAnswer.value;
 
             this.currentQuestionIndex++;
 
-            if (this.currentQuestionIndex - this.standardQuestions.length < this.customQuestionsNum) {
-                this.showCustomQuestion(this.currentQuestionIndex - this.standardQuestions.length);
+            if (this.currentQuestionIndex - this.standardQuestionNum < this.customQuestionsNum) {
+                this.showCustomQuestion(this.currentQuestionIndex - this.standardQuestionNum);
             } else {
                 this.showFinishMessage();
             }
@@ -212,7 +216,7 @@ class Questionnaire {
     }
 
     // カメラキャプチャ画面を表示するメソッド
-    showCameraCapture() {
+    showCameraCapture(index) {
         // 質問コンテナをクリア
         this.questionsContainer.innerHTML = '';
         this.questionsContainer.style.display = 'none';
@@ -236,10 +240,15 @@ class Questionnaire {
             this.cameraHandler.startCamera();
         });
 
+        // 撮影後に次へボタンを表示する
+        const nextButton = document.getElementById('next-button');
+        nextButton.style.display = 'block';
+
         // 撮影ボタンのクリックイベントリスナーを追加
         document.getElementById('capture-button').addEventListener('click', () => {
             const capturedDataUrl = this.cameraHandler.captureImage();
-            this.standardQuestionsInput.push(capturedDataUrl);
+            // this.standardQuestionsInput.push(capturedDataUrl);
+            this.standardQuestionsInput[index] = capturedDataUrl;
     
             // キャプチャー画像を表示する
             capturedImage.src = capturedDataUrl;
@@ -248,9 +257,9 @@ class Questionnaire {
             // キャプチャー画像のラベルを表示する
             capturedLabel.style.display = 'block';
     
-            // 撮影後に次へボタンを表示する
-            const nextButton = document.getElementById('next-button');
-            nextButton.style.display = 'block';
+            // // 撮影後に次へボタンを表示する
+            // const nextButton = document.getElementById('next-button');
+            // nextButton.style.display = 'block';
         });
     }
 
