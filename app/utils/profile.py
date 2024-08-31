@@ -64,18 +64,18 @@ class Profile:
         # プロフィール帳のひな型を作成
         self.output_profile = self.template[self.color - 1]
 
-        self.draw_free_text(text=text_list["name"], position=(750, 836), ancher="right", max_width=250)
-        self.draw_free_text(text=text_list["age"], position=(750, 1026), ancher="right", max_width=250)
-        self.draw_free_text(text=text_list["favorite"], position=(480, 1380), ancher="center", max_width=540)
-        self.draw_free_text(text=text_list["country"], position=(1382, 234), ancher="bottom", max_width=460)
-        self.draw_free_text(text=text_list["mbti"], position=(1340, 1521), ancher="center")
+        self.draw_free_text(text=text_list["name"], position=(750, 836), ancher="right", max_width=250, font_size=80)
+        self.draw_free_text(text=text_list["age"], position=(750, 1026), ancher="right", max_width=250, font_size=80)
+        self.draw_free_text(text=text_list["favorite"], position=(480, 1380), ancher="center", max_width=540, font_size=80)
+        self.draw_free_text(text=text_list["country"], position=(1382, 234), ancher="bottom", max_width=460, font_size=80)
+        self.draw_free_text(text=text_list["mbti"], position=(1340, 1521), ancher="center", font_size=80)
 
-        self.draw_free_text(text=text_list["question1"], position=(160, 1750), ancher="left_top", max_width=1040)
-        self.draw_free_text(text=text_list["question2"], position=(160, 1960), ancher="left_top", max_width=1040)
-        self.draw_free_text(text=text_list["question3"], position=(160, 2170), ancher="left_top", max_width=1040)
-        self.draw_free_text(text=text_list["answer1"], position=(1573, 1900), ancher="right_bottom", max_width=820)
-        self.draw_free_text(text=text_list["answer2"], position=(1573, 2105), ancher="right_bottom", max_width=820)
-        self.draw_free_text(text=text_list["answer3"], position=(1573, 2321), ancher="right_bottom", max_width=820)
+        self.draw_free_text(text=text_list["question1"], position=(160, 1750), ancher="left_top", max_width=1040, font_size=60)
+        self.draw_free_text(text=text_list["question2"], position=(160, 1960), ancher="left_top", max_width=1040, font_size=60)
+        self.draw_free_text(text=text_list["question3"], position=(160, 2170), ancher="left_top", max_width=1040, font_size=60)
+        self.draw_free_text(text=text_list["answer1"], position=(1573, 1900), ancher="right_bottom", max_width=820, font_size=60)
+        self.draw_free_text(text=text_list["answer2"], position=(1573, 2105), ancher="right_bottom", max_width=820, font_size=60)
+        self.draw_free_text(text=text_list["answer3"], position=(1573, 2321), ancher="right_bottom", max_width=820, font_size=60)
 
         self.draw_face_image(image=picture, position=(178, 192))
         self.draw_country_image(image=country_img, position=(830, 292), image_size=(760, 360))
@@ -107,7 +107,7 @@ class Profile:
         # 背景画像に貼り付ける
         self.output_profile.paste(image, position, image)
 
-    def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=80, max_width=540):
+    def draw_free_text(self, text, position, ancher="center", color=(0, 0, 0), font_size=60, max_width=540):
 
         text = capitalize_first_letter(text)
         # フォントを定義

@@ -30,5 +30,5 @@ ENV FLASK_ENV=production
 EXPOSE 8000
 
 # アプリケーションを起動
-# CMD ["flask", "run", "--host=0.0.0.0", "--port=8001"]
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app.main:app"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]
+# CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app.main:app"]
