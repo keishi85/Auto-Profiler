@@ -11,6 +11,7 @@ class Questionnaire {
         this.groupName = groupName; // グループ名
         this.showStandardQuestions = showStandardQuestions; // 表示する質問の配列
         this.customQuestionChoices = customQuestionChoices; // 追加質問の配列
+        this.customQuestionSelected = Array(customQuestionChoices.length).fill(false); // 追加質問が選択されたかどうかを保持する配列
 
         this.currentQuestionIndex = 0; // 現在の質問のインデックス
 
@@ -81,11 +82,13 @@ class Questionnaire {
         questionSelect.name = `custom-question-${customIndex}`;
 
         // 選択肢を追加
-        this.customQuestionChoices.forEach(choice => {
-            const option = document.createElement('option');
-            option.value = choice;
-            option.textContent = choice;
-            questionSelect.appendChild(option);
+        this.customQuestionChoices.forEach((choice, index) => {
+            if (!this.customQuestionSelected[index]) {
+                const option = document.createElement('option');
+                option.value = choice;
+                option.textContent = choice;
+                questionSelect.appendChild(option);
+            }
         });
 
         // 新たなlabel要素を作成（回答欄を表示するため）
@@ -153,6 +156,14 @@ class Questionnaire {
             const customAnswer = document.getElementById(`custom-answer-${customIndex}`);
             this.customQuestions[customIndex] = customQuestion.value;
             this.customQuestionsInput[customIndex] = customAnswer.value;
+
+            // 選択された質問がself.customQuestionChoiceのどのインデックスにあるかを特定
+            const selectedQuestionIndex = this.customQuestionChoices.indexOf(customQuestion.value);
+
+            // 質問を表示済みに設定
+            if (selectedQuestionIndex !== -1) {
+                this.customQuestionSelected[selectedQuestionIndex] = true;
+            }
 
             this.currentQuestionIndex++;
 
