@@ -152,7 +152,9 @@ class Questionnaire {
             const customQuestion = document.getElementById(`custom-question-${customIndex}`);
             const customAnswer = document.getElementById(`custom-answer-${customIndex}`);
             this.customQuestions[customIndex] = customQuestion.value;
+
             this.customQuestionsInput[customIndex] = customAnswer.value;
+
 
             this.currentQuestionIndex++;
 
@@ -349,13 +351,36 @@ const SHOW_STANDARD_QUESTIONS = [
     "MBTI"
 ];
 
+const CUSTOM_QUESTION_CHOICES_ENG = [
+    "How would you describe your personality in one word?",
+    "If today were your last day, what would you do?",
+    "Where would you like to travel?",
+    "What's your favorite scent?",
+    "If you could be any animal, what would you be?",
+    "What would you do if you suddenly became a billionaire?",
+    "Who is a famous person you admire?",
+    "What's the biggest mistake you've ever made?",
+    "What color represents you?",
+    "When was the happiest moment of your life?",
+    "When did you cry the most in your life?",
+    "What would you want for your last meal?"
+]
+
 const CUSTOM_QUESTION_CHOICES = [
-    "What is your favorite color?",
-    "What is your favorite food?",
-    "What is your favorite animal?",
-    "What is your favorite movie?",
-    "What is your favorite music?"
-];
+    "自分の性格を一言で表すと？",
+    "もし今日が人生最後の日なら何をしますか？",
+    "旅行するならどこがいい？",
+    "好きな香りは何ですか？",
+    "どんな動物に生まれ変わりたいですか？",
+    "突然億万長者になったら何をしますか？",
+    "尊敬する有名人は？",
+    "人生で一番やらかしたことは何ですか？",
+    "自分を色で例えると何ですか？",
+    "人生で一番幸せだと感じた瞬間は？",
+    "人生で一番泣いた出来事は？",
+    "最後の晩餐は？"
+    ];
+
 const CUSTOM_QUESTIONS_NUM = 3; // 追加質問の数
 
 // Questionnaireクラスのインスタンスを作成

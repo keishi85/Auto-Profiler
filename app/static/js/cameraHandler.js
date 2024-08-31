@@ -14,6 +14,7 @@ export class CameraHandler {
             .then(stream => {
                 this.stream = stream;
                 this.videoElement.srcObject = stream;
+                this.videoElement.style.transform = 'scaleX(-1)'; // 左右反転
             })
             .catch(err => {
                 console.error("Error accessing camera: ", err);
@@ -35,7 +36,8 @@ export class CameraHandler {
     // 撮影するメソッド
     captureImage() {
         const context = this.canvasElement.getContext('2d');
-        context.drawImage(this.videoElement, 0, 0, this.canvasElement.width, this.canvasElement.height);
+        context.scale(-1, 1); // 水平方向に反転
+        context.drawImage(this.videoElement, 0, 0, -this.canvasElement.width, this.canvasElement.height);
         const dataUrl = this.canvasElement.toDataURL('image/png');
         this.imageElement.src = dataUrl;
         this.imageElement.style.display = 'block';
