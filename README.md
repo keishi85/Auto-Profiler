@@ -32,4 +32,7 @@ a7740e990fa3   httpd        "httpd-foreground"        3 minutes ago   Exited (0)
 a7740e990fa3
 
 $ docker container logs (app)
--> logの確認                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+-> logの確認                              
+
+![image](https://github.com/user-attachments/assets/5025d265-2977-432f-9ec6-6497340b76c7)
+
